@@ -3,16 +3,10 @@ import { useAuth } from './AuthContext'
 import type { UserRole } from './types'
 
 export function RequireAuth({ allowedRoles }: { allowedRoles: UserRole[] }) {
-  const { user, isLoading } = useAuth()
+  // Safe to read synchronously: <AppRoutes> only renders this tree once the
+  // initial /api/auth/me check has resolved (see App.tsx's SplashScreen gate).
+  const { user } = useAuth()
   const location = useLocation()
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-neutral-500">
-        Loading…
-      </div>
-    )
-  }
 
   if (!user) {
     return <Navigate to="/login" replace state={{ from: location }} />
