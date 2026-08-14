@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js'
 import { sendSuccess } from '../utils/apiResponse.js'
 import { addWasteSchema } from '../validators/bin.validator.js'
 import { listBins, getBin, addSimulatedWaste } from '../services/wasteBin.service.js'
+import { notifyThresholdCrossed } from '../services/notification.service.js'
 import type { WasteBinDoc } from '../models/WasteBin.js'
 import type { HydratedDocument } from 'mongoose'
 
@@ -33,6 +34,13 @@ export const getBinById = asyncHandler(async (req: Request, res: Response) => {
 
 export const addWaste = asyncHandler(async (req: Request, res: Response) => {
   const { amountPercent } = addWasteSchema.parse(req.body ?? {})
-  const bin = await addSimulatedWaste(req.params.id as string, amountPercent)
+  const { bin, thresholdCrossedInto } = await addSimulatedWaste(req.params.id as string, amountPercent)
+
+  // Only the user who triggered the crossing is notified here — this is not
+  // an alert to NISEPA staff/admin (that's the not-yet-built Alert Engine).
+  if (req.auth && thresholdCrossedInto) {
+    await notifyThresholdCrossed(req.auth.userId, bin.id, bin.name, thresholdCrossedInto)
+  }
+
   sendSuccess(res, { bin: toBinDTO(bin) })
 })

@@ -1560,17 +1560,20 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 17 — Smart Bin Interaction | ✅ Done | `/smart-bin` lists real bins from the API; "Add simulated waste" button calls `POST /api/bins/:id/waste`, disables + relabels once a bin hits 100%. |
 | 18 — 3D Smart Bin | ✅ Done | `SmartBinVisual` — lightweight SVG bin (per Section 8: CSS/SVG fallback, no 3D engine), animated fill height/color transitions, status-colored, percentage label. |
 | 19 — Waste Level Simulation | ✅ Done | `addSimulatedWaste()` service: random 5-15% increase (clamped 0-100), recomputes status via `getBinStatus()`, persists both the bin snapshot and an append-only `WasteLevel` history row. |
-| 20 — Public Notifications | ⬜ Not started | |
-| 21 — Issue Reporting | ⬜ Not started | |
+| 20 — Public Notifications | ✅ Done | `Notification` model + `GET /api/notifications` + `PATCH /api/notifications/:id/read`, wired to real events: when a logged-in user's "add waste" action crosses a threshold (into warning/high/full, never duplicated for same-tier updates), they get a real notification. `NotificationList` component replaces the dashboard's static empty state. Message text deliberately does NOT claim NISEPA staff were alerted — that's Stage 27 (Alert Engine), not built yet. |
+| 21 — Issue Reporting | ✅ Done | New `IssueReport` model (distinct from the `reports` analytics-snapshot collection) + `POST /api/issues`, works for both anonymous and logged-in visitors (`attachAuthIfPresent`). `/report` is a real form now, not a placeholder. |
+
+**Phase 2 is now complete (Stages 11-21).**
 
 ## Phases 3–7
 
 Mostly not started, with one exception:
 
-- A slice of **Stage 22 (Simulated Sensor Service)**, **Stage 24 (IoT Data API)**, and **Stage 26 (Threshold Engine)** was pulled forward and built as part of Stages 17-19 above, because the Smart Bin Interaction screen needed real backend support to avoid faking data. What exists: `POST /api/bins/:id/waste` (the "sensor push" boundary), `getBinStatus()` threshold derivation, `WasteBin`/`WasteLevel` persistence, and a demo-bin seed (`server/src/seed/bins.seed.ts`, 5 real Minna/Niger State locations, auto-seeds on first run against an empty database).
-- **Not yet built** from Phase 3: Stage 23 (a distinct simulated-ESP32 abstraction layer — currently the bin service plays this role directly), Stage 25 (real-time push to connected clients — currently the client only sees updates it triggered itself, no live push to *other* open tabs/dashboards), Stage 27 (Alert Engine — threshold crossings are computed but no `Alert` documents are created yet), Stage 28 (Notification Engine), Stage 29 (Bin Status Engine — status sync exists inline in the bin service, not as its own module).
+- A slice of **Stage 22 (Simulated Sensor Service)**, **Stage 24 (IoT Data API)**, and **Stage 26 (Threshold Engine)** was pulled forward and built as part of Stages 17-19, because the Smart Bin Interaction screen needed real backend support to avoid faking data. What exists: `POST /api/bins/:id/waste` (the "sensor push" boundary), `getBinStatus()` threshold derivation, `WasteBin`/`WasteLevel` persistence, and a demo-bin seed (`server/src/seed/bins.seed.ts`, 5 real Minna/Niger State locations, auto-seeds on first run against an empty database).
+- A user-facing sliver of **Stage 28 (Notification Engine)** also exists now (see Stage 20 above) — but it only notifies the acting user, not staff/admin.
+- **Not yet built** from Phase 3: Stage 23 (a distinct simulated-ESP32 abstraction layer — currently the bin service plays this role directly), Stage 25 (real-time push to connected clients — currently the client only sees updates it triggered itself, no live push to *other* open tabs/dashboards), Stage 27 (Alert Engine — threshold crossings are computed but no `Alert` documents are created yet, so Staff/Admin have nothing to see), Stage 29 (Bin Status Engine — status sync exists inline in the bin service, not as its own module).
 - **Phases 4-7** (NISEPA Staff, Administrator, Optional Transaction Demo, Quality Assurance): not started.
 
 ## Next Stage
 
-**Stage 20 — Public Notifications**, then **Stage 21 — Issue Reporting**. After that, Phase 3's remaining pieces (Alert Engine, real-time push, Notification Engine) become necessary before Phase 4 (Staff dashboards) can show real alert data instead of another placeholder.
+**Stage 22/23 (Simulated Sensor + ESP32 layer) is largely already covered** by the Stage 17-19 work — the real gap blocking Phase 4 (Staff Dashboard, Stage 30) is **Stage 27 (Alert Engine)**: no `Alert` documents are created yet, so a Staff dashboard would have nothing real to display. Recommend building the Alert Engine next (create an `Alert` doc on every threshold crossing, alongside the existing user notification), then Stage 30 — Staff Dashboard can show real alert data instead of a placeholder.

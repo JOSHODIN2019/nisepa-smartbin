@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import { getBins, getBinById, addWaste } from '../controllers/bin.controller.js'
+import { attachAuthIfPresent } from '../middleware/auth.middleware.js'
 
 export const binRouter = Router()
 
@@ -15,4 +16,4 @@ const addWasteLimiter = rateLimit({
 
 binRouter.get('/', getBins)
 binRouter.get('/:id', getBinById)
-binRouter.post('/:id/waste', addWasteLimiter, addWaste)
+binRouter.post('/:id/waste', addWasteLimiter, attachAuthIfPresent, addWaste)

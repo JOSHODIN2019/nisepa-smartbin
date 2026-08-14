@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
+import { NotificationList } from '@/components/NotificationList'
 
 const quickActions = [
   {
@@ -62,11 +63,7 @@ export function PublicDashboardPage() {
 
       <div className="mt-10">
         <h2 className="text-sm font-semibold text-neutral-900">Notifications</h2>
-        <div className="mt-3 rounded-lg border border-dashed border-neutral-200 p-8 text-center">
-          <p className="text-sm text-neutral-500">
-            No notifications yet. You'll see bin alerts and updates here once you start interacting with a smart bin.
-          </p>
-        </div>
+        <NotificationList />
       </div>
     </div>
   )
