@@ -1519,3 +1519,54 @@ This does not waive the Paid-Service Rule (Section 4.3) or Change Management (Se
 **Decided:** 2026-08-14
 
 Confirmed: Nigerian-context imagery should be used on the landing page and other public-facing pages where appropriate, sourced from properly licensed/free sources (e.g., Unsplash/Pexels free-license Nigerian photography), consistent with the existing Image Policy.
+
+---
+
+# 37. PROGRESS LOG
+
+Updated at the end of every completed stage, per Section 21 (Definition of Done). This is the authoritative record of what is actually built — check this before assuming a stage's status.
+
+**Mode:** Continuous (Section 36.2) — stages proceed without per-stage approval gates until the project owner says stop.
+
+## Phase 1 — Foundation
+
+| Stage | Status | Notes |
+|---|---|---|
+| 01 — Project Audit | ✅ Done | Node v24.11.1, npm 11.6.2, git 2.52.0. Renamed `PROJECT_MEMORY(10).md` → `PROJECT_MEMORY.md`. Local git repo initialized (`main` branch), no remote yet. |
+| 02 — Architecture Setup | ✅ Done | Vite+React+TS client, Express+TS server, MongoDB Atlas + Mongoose (see 36.1), npm (no workspace tooling). |
+| 03 — Project Structure | ✅ Done | `client/`, `server/src/{config,controllers,routes,services,repositories,middleware,validators,types,models}`, `docs/`, `tests/`. |
+| 04 — Global Design System | ✅ Done | Tailwind v4 `@theme` tokens in `client/src/index.css`: brand green, neutrals, waste-level status colors, radii, shadows. Documented in `docs/DESIGN_SYSTEM.md`. |
+| 05 — Database Setup | ✅ Done | `server/src/config/env.ts` (Zod-validated env), `server/src/config/db.ts` (Mongoose connection to Atlas). |
+| 06 — Database Schema | ✅ Done | Models: User, WasteBin, WasteLevel, Alert, CollectionRecord, Notification, Report, AuditLog. Shared enums + `getBinStatus()` in `server/src/types/enums.ts`. |
+| 07 — API Foundation | ✅ Done | Express app (`server/src/app.ts`): CORS, rate limiting, `{success,data}`/`{success,error}` envelopes, centralized error handler. |
+| 08 — Authentication Foundation | ✅ Done | bcrypt hashing, JWT httpOnly cookie sessions. `/api/auth/{register,login,logout,me}`. Public registration always creates `public` role. |
+| 09 — Role-Based Access | ✅ Done | `requireAuth` + `requireRole(...roles)` middleware. |
+| 10 — Frontend Application Shell | ✅ Done | React Router v7 route tree (public/staff/admin), `PublicLayout`, shared `DashboardLayout` → `StaffLayout`/`AdminLayout`, `AuthContext`, `RequireAuth` guard, `lib/api.ts` fetch wrapper. Functional + role-based routing browser-verified via Playwright (screenshots + console/network checks, no errors). |
+
+**Verification method used:** `mongodb-memory-server` (in-memory MongoDB) for automated tests and for local manual browser verification — no real MongoDB Atlas credentials have been supplied yet. **Still needed from the project owner: a real `MONGODB_URI` connection string for `server/.env`** before the app can run against production Atlas.
+
+**Test coverage so far:** 6 passing Vitest tests (`tests/server/`) — DB connectivity, model defaults, HTTP health/404 envelopes, register/login/me/logout, RBAC 401/403.
+
+## Phase 2 — Public Experience
+
+| Stage | Status |
+|---|---|
+| 11 — Splash / Loading Experience | Not started |
+| 12 — Landing Page | Not started (placeholder exists from Stage 10) |
+| 13 — Registration | Partially done — functional form built in Stage 10 for shell testing; final visual design pending |
+| 14 — Login | Partially done — functional form built in Stage 10 for shell testing; final visual design pending |
+| 15 — Public Dashboard | Not started (placeholder exists) |
+| 16 — Waste Information | Not started (placeholder exists) |
+| 17 — Smart Bin Interaction | Not started |
+| 18 — 3D Smart Bin | Not started |
+| 19 — Waste Level Simulation | Not started |
+| 20 — Public Notifications | Not started |
+| 21 — Issue Reporting | Not started |
+
+## Phases 3–7
+
+Not started (IoT Simulation, NISEPA Staff, Administrator, Optional Transaction Demo, Quality Assurance).
+
+## Next Stage
+
+**Stage 11 — Splash / Loading Experience**, then **Stage 12 — Landing Page** (this is where Nigerian-context imagery per Section 36.3 will be sourced and applied).
