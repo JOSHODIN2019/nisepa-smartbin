@@ -11,4 +11,7 @@ export const alertRepository = {
   findById(id: string) {
     return Alert.findById(id).populate('binId', 'name code location')
   },
+  resolveAllForBin(binId: string) {
+    return Alert.updateMany({ binId, status: { $ne: 'resolved' } }, { status: 'resolved', resolvedAt: new Date() })
+  },
 }

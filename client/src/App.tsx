@@ -21,6 +21,8 @@ import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminBinsPage } from '@/pages/admin/AdminBinsPage'
 import { AdminAlertsPage } from '@/pages/admin/AdminAlertsPage'
 import { UserManagementPage } from '@/pages/admin/UserManagementPage'
+import { StaffCollectionsPage } from '@/pages/staff/StaffCollectionsPage'
+import { AdminCollectionsPage } from '@/pages/admin/AdminCollectionsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function AppRoutes() {
@@ -57,7 +59,7 @@ function AppRoutes() {
           <Route path="dashboard" element={<StaffDashboardPage />} />
           <Route path="bins" element={<BinMonitoringPage />} />
           <Route path="alerts" element={<AlertCenterPage />} />
-          <Route path="collections" element={<PlaceholderPage title="Collection Management" stage="Stage 35" />} />
+          <Route path="collections" element={<StaffCollectionsPage />} />
         </Route>
       </Route>
 
@@ -67,7 +69,7 @@ function AppRoutes() {
           <Route path="bins" element={<AdminBinsPage />} />
           <Route path="users" element={<UserManagementPage />} />
           <Route path="alerts" element={<AdminAlertsPage />} />
-          <Route path="collections" element={<PlaceholderPage title="Collection Records" stage="Stage 41" />} />
+          <Route path="collections" element={<AdminCollectionsPage />} />
           <Route path="reports" element={<PlaceholderPage title="Reports" stage="Stage 42" />} />
           <Route path="settings" element={<PlaceholderPage title="Settings" stage="Stage 44" />} />
         </Route>

@@ -1587,8 +1587,8 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 32 — Bin Details | ⬜ Not started | |
 | 33 — Real-Time Monitoring | ⬜ Not started | Depends on Stage 25 (no live push yet — staff must refresh to see other users' changes). |
 | 34 — Alert Center | ✅ Done | `/staff/alerts` — full alert list, same `AlertList` component as the dashboard's preview. |
-| 35 — Collection Management | ⬜ Not started | Nav link exists (`/staff/collections`), still a placeholder. |
-| 36 — Collection History | ⬜ Not started | |
+| 35 — Collection Management | ✅ Done | `/staff/collections` — "Needs collection" list (bins with status != normal) with a "Record collection" action per bin, optional notes field. |
+| 36 — Collection History | ✅ Done | Same page, `CollectionHistoryTable` below the needs-collection list. |
 
 **Demo accounts** (`docs/DEMO_ACCOUNTS.md`): `staff@nisepa.demo` / `admin@nisepa.demo`, password `Password123!`, auto-seeded on first run — there's no admin User Management UI yet (Stage 38) to create Staff/Admin accounts any other way.
 
@@ -1604,15 +1604,23 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 38 — User Management | ✅ Done | `/admin/users` — admin-exclusive (Staff cannot access, per Section 6.3). Create Staff/Admin accounts, change role, activate/deactivate. Guards against self-demotion and self-deactivation (both client-disabled and server-enforced with dedicated error codes). Deactivated accounts are actually blocked from logging in (`login()` already checked `isActive`, reused here). |
 | 39 — Bin Management | ✅ Done | `/admin/bins` — create form + inline Deactivate/Reactivate on `BinMonitoringTable` (now takes an optional `onToggleActive` prop, backward-compatible with Staff's read-only usage). `POST/PATCH /api/bins` admin-only; rejects duplicate bin codes (`BIN_CODE_IN_USE`). `GET /api/bins` now returns inactive bins too for staff/admin (they need to see them to reactivate) while staying active-only for the public smart-bin page. |
 | 40 — Alert Management | ✅ Done | `/admin/alerts` — same `AlertList` component, unfiltered (admin sees everything, same data as Staff's Alert Center currently — no per-role filtering exists yet). |
-| 41 — Collection Records | ⬜ Not started | |
+| 41 — Collection Records | ✅ Done | `/admin/collections` — same `CollectionHistoryTable`, unfiltered. |
 | 42 — Reports | ⬜ Not started | Nav link exists, still a placeholder. |
 | 43 — System Activity | ⬜ Not started | |
 | 44 — Settings | ⬜ Not started | Nav link exists, still a placeholder. |
 
 Verified: RBAC re-confirmed with a fresh browser context — a Staff account visiting `/admin/dashboard` is redirected to `/`. Also confirmed the `DashboardLayout` mobile-responsive fix (from the Staff work) carries over correctly to Admin for free, since it's the same shared layout component — screenshotted at 390px width, no cramping.
 
+### Collections (Stages 35, 36, 41) — closes the core system loop
+
+`recordCollection()` (`server/src/services/collection.service.ts`) is the missing piece from PROJECT_MEMORY.md Section 1.2's loop: staff records a collection -> `CollectionRecord` created (with `levelBeforeCollection` snapshotted) -> bin resets to 0%/`normal` -> **any outstanding alerts for that bin are auto-resolved** (`alertRepository.resolveAllForBin()`), since the reason for them no longer exists. `POST /api/collections/:binId` and `GET /api/collections`, both staff/admin-only.
+
+Frontend: `/staff/collections` (needs-collection list + history) and `/admin/collections` (history only), sharing `CollectionHistoryTable`.
+
+**Bug found and fixed:** `collectionRecordRepository.create()` returned an unpopulated document (bare ObjectIds for `binId`/`staffId`), so the record the client renders immediately after POST-ing showed raw database IDs instead of the bin/staff names — same root cause as the earlier Alert populate bug (Stage 27-30 work), just a different repository. Fixed by populating after create, same pattern as `alert.repository.ts#findById`. Added a regression test asserting the POST response itself (not just the subsequent GET list) is populated, since the bug only showed up in the immediate render, not the refetched list.
+
 ## Next Stage
 
-**Phases 4-5's monitoring/management core is now done** (Stages 30, 31, 34, 37, 38, 39, 40). What's left in these phases — Collections (35/36/41) and Reports/Settings/System Activity (42-44) — are all genuinely new feature areas (collection scheduling/history, generated reports, audit logs, system settings), not extensions of what already exists. This is a reasonable point to check in with the project owner before continuing further, given how much has been built in this session.
+**Phases 4-5's monitoring/management core is now fully done** (Stages 30, 31, 34, 35, 36, 37, 38, 39, 40, 41). What's left — Reports (42), System Activity/audit log (43), Settings (44) — are genuinely new feature areas, not extensions of what already exists. Recommend checking in with the project owner before continuing further, given how much has been built in this session (34 stages total).
 
-Verified for this stage: 19 passing Vitest tests (2 new — RBAC on bin CRUD, full create/duplicate-reject/update/deactivate lifecycle, and that deactivated bins disappear from the public listing while staying visible to staff/admin). Full browser run: created a bin as admin, deactivated it, confirmed it's gone from `/smart-bin` (public) but still shows (dimmed, "Inactive") on both `/admin/bins` and `/staff/bins` (confirming the shared-component change didn't break Staff's read-only view). Zero console errors.
+Verified for this stage: 21 passing Vitest tests (2 new). Full browser run across staff, admin, and mobile viewports: recorded a collection, confirmed the bin reset to 0%/Normal on both Bin Monitoring pages, confirmed the record displays correctly with real names (not raw IDs) on both `/staff/collections` and `/admin/collections`. Zero console errors throughout.
