@@ -1553,8 +1553,8 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 |---|---|---|
 | 11 — Splash / Loading Experience | ✅ Done | Branded `SplashScreen` gates the whole app until the initial `/api/auth/me` check resolves (`AppRoutes` in `App.tsx`) — prevents a logged-out/logged-in flash. |
 | 12 — Landing Page | ✅ Done | Hero (Lagos street market photo + gradient overlay), "How it works" 4-step strip mirroring Section 1.2's core loop, 4-card feature grid, mission section (Nigeria sunset photo) + CTA. Real Unsplash imagery, credited in `docs/IMAGE_CREDITS.md`. Browser-verified at desktop/tablet/mobile widths, no console errors. |
-| 13 — Registration | 🟡 Partial | Functional form built in Stage 10 for shell testing; final visual design pending. |
-| 14 — Login | 🟡 Partial | Functional form built in Stage 10 for shell testing; final visual design pending. |
+| 13 — Registration | ✅ Done | Split-screen `AuthLayout` (brand panel w/ benefit bullets on desktop, logo-only header on mobile) shared with Login. `FormField` component extracted to deduplicate label+input markup. |
+| 14 — Login | ✅ Done | Same `AuthLayout`. Full login→dashboard→logout loop browser-verified with zero console errors. |
 | 15 — Public Dashboard | ⬜ Not started | Placeholder exists. |
 | 16 — Waste Information | ⬜ Not started | Placeholder exists. |
 | 17 — Smart Bin Interaction | ⬜ Not started | |
@@ -1569,4 +1569,4 @@ Not started (IoT Simulation, NISEPA Staff, Administrator, Optional Transaction D
 
 ## Next Stage
 
-**Stage 13 — Registration** and **Stage 14 — Login** final visual design (functional versions already exist), then **Stage 15 — Public Dashboard**.
+**Stage 15 — Public Dashboard**.

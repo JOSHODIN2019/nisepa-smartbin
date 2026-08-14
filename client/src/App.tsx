@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from '@/features/auth/AuthContext'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { SplashScreen } from '@/components/SplashScreen'
 import { PublicLayout } from '@/layouts/PublicLayout'
+import { AuthLayout } from '@/layouts/AuthLayout'
 import { StaffLayout } from '@/layouts/StaffLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { LandingPage } from '@/pages/public/LandingPage'
@@ -29,14 +30,17 @@ function AppRoutes() {
         <Route index element={<LandingPage />} />
         <Route path="waste-info" element={<PlaceholderPage title="Waste Information" stage="Stage 16" />} />
         <Route path="smart-bin" element={<PlaceholderPage title="Smart Bin Interaction" stage="Stage 17–18" />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
 
         <Route element={<RequireAuth allowedRoles={['public', 'staff', 'admin']} />}>
           <Route path="dashboard" element={<PublicDashboardPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
+      </Route>
+
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
       </Route>
 
       <Route element={<RequireAuth allowedRoles={['staff', 'admin']} />}>
