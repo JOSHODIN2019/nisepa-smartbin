@@ -23,7 +23,7 @@ const quickActions = [
     ),
   },
   {
-    to: '/waste-info',
+    to: '/report',
     title: 'Report an issue',
     description: 'Flag a waste problem near you for NISEPA to review.',
     icon: (

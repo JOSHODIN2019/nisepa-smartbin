@@ -1556,7 +1556,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 13 — Registration | ✅ Done | Split-screen `AuthLayout` (brand panel w/ benefit bullets on desktop, logo-only header on mobile) shared with Login. `FormField` component extracted to deduplicate label+input markup. |
 | 14 — Login | ✅ Done | Same `AuthLayout`. Full login→dashboard→logout loop browser-verified with zero console errors. |
 | 15 — Public Dashboard | ✅ Done | Greeting header, 3 quick-action cards (Smart Bin / Waste Info / Report an Issue — link to their still-placeholder stages), honest empty-state notifications panel (no fake data). |
-| 16 — Waste Information | ⬜ Not started | Placeholder exists. |
+| 16 — Waste Information | ✅ Done | 4 threshold cards (Normal/Warning/High Priority/Full) mirroring Section 7's table, each with a distinct icon (not color alone, per Section 29) + a "Why it matters" explainer. |
 | 17 — Smart Bin Interaction | ⬜ Not started | |
 | 18 — 3D Smart Bin | ⬜ Not started | |
 | 19 — Waste Level Simulation | ⬜ Not started | |
@@ -1569,4 +1569,4 @@ Not started (IoT Simulation, NISEPA Staff, Administrator, Optional Transaction D
 
 ## Next Stage
 
-**Stage 16 — Waste Information** page.
+**Stage 17 — Smart Bin Interaction.** This requires real backend support (bin list/detail + "add waste" endpoints) that doesn't exist yet — will need to pull forward a slice of Phase 3 (IoT Simulation, Stages 22-26) to make it functional rather than fake.
