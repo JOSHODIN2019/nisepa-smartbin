@@ -1,8 +1,9 @@
 import type { Request, Response } from 'express'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { sendSuccess } from '../utils/apiResponse.js'
-import { addWasteSchema } from '../validators/bin.validator.js'
-import { listBins, getBin, addSimulatedWaste } from '../services/wasteBin.service.js'
+import { addWasteSchema, createBinSchema, updateBinSchema } from '../validators/bin.validator.js'
+import { listBins, getBin, addSimulatedWaste, createBin, updateBin } from '../services/wasteBin.service.js'
+import { UserRole } from '../types/enums.js'
 import { notifyThresholdCrossed } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
 import { statusToAlertThreshold } from '../types/enums.js'
@@ -24,13 +25,26 @@ function toBinDTO(bin: HydratedDocument<WasteBinDoc>) {
   }
 }
 
-export const getBins = asyncHandler(async (_req: Request, res: Response) => {
-  const bins = await listBins()
+export const getBins = asyncHandler(async (req: Request, res: Response) => {
+  const includeInactive = req.auth?.role === UserRole.STAFF || req.auth?.role === UserRole.ADMIN
+  const bins = await listBins(includeInactive)
   sendSuccess(res, { bins: bins.map(toBinDTO) })
 })
 
 export const getBinById = asyncHandler(async (req: Request, res: Response) => {
   const bin = await getBin(req.params.id as string)
+  sendSuccess(res, { bin: toBinDTO(bin) })
+})
+
+export const postBin = asyncHandler(async (req: Request, res: Response) => {
+  const input = createBinSchema.parse(req.body)
+  const bin = await createBin(input)
+  sendSuccess(res, { bin: toBinDTO(bin) }, 201)
+})
+
+export const patchBin = asyncHandler(async (req: Request, res: Response) => {
+  const input = updateBinSchema.parse(req.body)
+  const bin = await updateBin(req.params.id as string, input)
   sendSuccess(res, { bin: toBinDTO(bin) })
 })
 

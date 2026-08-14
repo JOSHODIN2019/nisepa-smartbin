@@ -11,12 +11,29 @@ function randomAddAmount(): number {
   )
 }
 
-export async function listBins() {
-  return wasteBinRepository.findAllActive()
+// Staff/Admin see inactive bins too (they need to reactivate them); the
+// public smart-bin page only ever sees active bins.
+export async function listBins(includeInactive: boolean) {
+  return includeInactive ? wasteBinRepository.findAll() : wasteBinRepository.findAllActive()
 }
 
 export async function getBin(id: string) {
   const bin = await wasteBinRepository.findById(id)
+  if (!bin) throw ApiError.notFound('Bin not found')
+  return bin
+}
+
+export async function createBin(input: { code: string; name: string; address: string; capacityLiters: number }) {
+  const existing = await wasteBinRepository.findByCode(input.code)
+  if (existing) throw ApiError.conflict(`A bin with code "${input.code}" already exists`, 'BIN_CODE_IN_USE')
+  return wasteBinRepository.create(input)
+}
+
+export async function updateBin(
+  id: string,
+  input: { name?: string; address?: string; capacityLiters?: number; isActive?: boolean },
+) {
+  const bin = await wasteBinRepository.updateById(id, input)
   if (!bin) throw ApiError.notFound('Bin not found')
   return bin
 }

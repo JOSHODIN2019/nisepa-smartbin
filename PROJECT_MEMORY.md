@@ -1602,7 +1602,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 |---|---|---|
 | 37 — Administrator Dashboard | ✅ Done | `/admin/dashboard` — reuses `StatTile`/`AlertList` from Staff, adds a "New issue reports" tile backed by a new admin-only `GET /api/issues` + `GET /api/issues/stats` (closes the loop on Stage 21's write-only issue reports — someone can finally see them). |
 | 38 — User Management | ✅ Done | `/admin/users` — admin-exclusive (Staff cannot access, per Section 6.3). Create Staff/Admin accounts, change role, activate/deactivate. Guards against self-demotion and self-deactivation (both client-disabled and server-enforced with dedicated error codes). Deactivated accounts are actually blocked from logging in (`login()` already checked `isActive`, reused here). |
-| 39 — Bin Management | 🟡 Partial | `/admin/bins` reuses `BinMonitoringTable` — read-only for now; create/edit/deactivate not built. |
+| 39 — Bin Management | ✅ Done | `/admin/bins` — create form + inline Deactivate/Reactivate on `BinMonitoringTable` (now takes an optional `onToggleActive` prop, backward-compatible with Staff's read-only usage). `POST/PATCH /api/bins` admin-only; rejects duplicate bin codes (`BIN_CODE_IN_USE`). `GET /api/bins` now returns inactive bins too for staff/admin (they need to see them to reactivate) while staying active-only for the public smart-bin page. |
 | 40 — Alert Management | ✅ Done | `/admin/alerts` — same `AlertList` component, unfiltered (admin sees everything, same data as Staff's Alert Center currently — no per-role filtering exists yet). |
 | 41 — Collection Records | ⬜ Not started | |
 | 42 — Reports | ⬜ Not started | Nav link exists, still a placeholder. |
@@ -1613,4 +1613,6 @@ Verified: RBAC re-confirmed with a fresh browser context — a Staff account vis
 
 ## Next Stage
 
-**Stage 39 (finish Bin Management: create/edit/deactivate)** — the one remaining CRUD gap in Phase 4/5's monitoring surface. After that, Phases 4-5's core is essentially done except Collections (Stages 35/36/41) and Reports/Settings/System Activity (42-44), which are reasonable stopping points to check in with the project owner before continuing further, given how much has been built in this session.
+**Phases 4-5's monitoring/management core is now done** (Stages 30, 31, 34, 37, 38, 39, 40). What's left in these phases — Collections (35/36/41) and Reports/Settings/System Activity (42-44) — are all genuinely new feature areas (collection scheduling/history, generated reports, audit logs, system settings), not extensions of what already exists. This is a reasonable point to check in with the project owner before continuing further, given how much has been built in this session.
+
+Verified for this stage: 19 passing Vitest tests (2 new — RBAC on bin CRUD, full create/duplicate-reject/update/deactivate lifecycle, and that deactivated bins disappear from the public listing while staying visible to staff/admin). Full browser run: created a bin as admin, deactivated it, confirmed it's gone from `/smart-bin` (public) but still shows (dimmed, "Inactive") on both `/admin/bins` and `/staff/bins` (confirming the shared-component change didn't break Staff's read-only view). Zero console errors.

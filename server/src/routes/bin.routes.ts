@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
-import { getBins, getBinById, addWaste } from '../controllers/bin.controller.js'
-import { attachAuthIfPresent } from '../middleware/auth.middleware.js'
+import { getBins, getBinById, addWaste, postBin, patchBin } from '../controllers/bin.controller.js'
+import { attachAuthIfPresent, requireAuth } from '../middleware/auth.middleware.js'
+import { requireRole } from '../middleware/rbac.middleware.js'
+import { UserRole } from '../types/enums.js'
 
 export const binRouter = Router()
 
@@ -14,6 +16,9 @@ const addWasteLimiter = rateLimit({
   legacyHeaders: false,
 })
 
-binRouter.get('/', getBins)
+binRouter.get('/', attachAuthIfPresent, getBins)
 binRouter.get('/:id', getBinById)
 binRouter.post('/:id/waste', addWasteLimiter, attachAuthIfPresent, addWaste)
+
+binRouter.post('/', requireAuth, requireRole(UserRole.ADMIN), postBin)
+binRouter.patch('/:id', requireAuth, requireRole(UserRole.ADMIN), patchBin)
