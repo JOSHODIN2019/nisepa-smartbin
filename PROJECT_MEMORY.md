@@ -1555,7 +1555,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 12 — Landing Page | ✅ Done | Hero (Lagos street market photo + gradient overlay), "How it works" 4-step strip mirroring Section 1.2's core loop, 4-card feature grid, mission section (Nigeria sunset photo) + CTA. Real Unsplash imagery, credited in `docs/IMAGE_CREDITS.md`. Browser-verified at desktop/tablet/mobile widths, no console errors. |
 | 13 — Registration | ✅ Done | Split-screen `AuthLayout` (brand panel w/ benefit bullets on desktop, logo-only header on mobile) shared with Login. `FormField` component extracted to deduplicate label+input markup. |
 | 14 — Login | ✅ Done | Same `AuthLayout`. Full login→dashboard→logout loop browser-verified with zero console errors. |
-| 15 — Public Dashboard | ⬜ Not started | Placeholder exists. |
+| 15 — Public Dashboard | ✅ Done | Greeting header, 3 quick-action cards (Smart Bin / Waste Info / Report an Issue — link to their still-placeholder stages), honest empty-state notifications panel (no fake data). |
 | 16 — Waste Information | ⬜ Not started | Placeholder exists. |
 | 17 — Smart Bin Interaction | ⬜ Not started | |
 | 18 — 3D Smart Bin | ⬜ Not started | |
@@ -1569,4 +1569,4 @@ Not started (IoT Simulation, NISEPA Staff, Administrator, Optional Transaction D
 
 ## Next Stage
 
-**Stage 15 — Public Dashboard**.
+**Stage 16 — Waste Information** page.
