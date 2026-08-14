@@ -11,7 +11,7 @@ const collectionRecordSchema = new Schema(
     scheduledAt: { type: Date },
     completedAt: { type: Date },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
+  { timestamps: true },
 )
 
 export type CollectionRecordDoc = InferSchemaType<typeof collectionRecordSchema>

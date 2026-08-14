@@ -11,7 +11,7 @@ const reportSchema = new Schema(
     periodEnd: { type: Date },
     data: { type: Schema.Types.Mixed, required: true },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: false } },
+  { timestamps: { createdAt: true, updatedAt: false } },
 )
 
 export type ReportDoc = InferSchemaType<typeof reportSchema>

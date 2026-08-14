@@ -9,7 +9,7 @@ const notificationSchema = new Schema(
     relatedBinId: { type: Schema.Types.ObjectId, ref: 'WasteBin' },
     read: { type: Boolean, required: true, default: false, index: true },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: false } },
+  { timestamps: { createdAt: true, updatedAt: false } },
 )
 
 export type NotificationDoc = InferSchemaType<typeof notificationSchema>

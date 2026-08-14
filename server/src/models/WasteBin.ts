@@ -16,7 +16,7 @@ const wasteBinSchema = new Schema(
     isActive: { type: Boolean, default: true },
     lastCollectedAt: { type: Date },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
+  { timestamps: true },
 )
 
 export type WasteBinDoc = InferSchemaType<typeof wasteBinSchema>

@@ -9,7 +9,7 @@ const wasteLevelSchema = new Schema(
     source: { type: String, enum: Object.values(LevelSource), required: true, default: LevelSource.SIMULATED_SENSOR },
     recordedAt: { type: Date, required: true, default: Date.now, index: true },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: false } },
+  { timestamps: { createdAt: true, updatedAt: false } },
 )
 
 export type WasteLevelDoc = InferSchemaType<typeof wasteLevelSchema>

@@ -8,7 +8,7 @@ const auditLogSchema = new Schema(
     targetId: { type: Schema.Types.ObjectId },
     metadata: { type: Schema.Types.Mixed },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: false } },
+  { timestamps: { createdAt: true, updatedAt: false } },
 )
 
 export type AuditLogDoc = InferSchemaType<typeof auditLogSchema>

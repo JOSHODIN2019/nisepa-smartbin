@@ -13,7 +13,7 @@ const alertSchema = new Schema(
     acknowledgedAt: { type: Date },
     resolvedAt: { type: Date },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
+  { timestamps: true },
 )
 
 export type AlertDoc = InferSchemaType<typeof alertSchema>

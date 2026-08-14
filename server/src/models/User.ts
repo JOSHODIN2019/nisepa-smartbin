@@ -9,7 +9,7 @@ const userSchema = new Schema(
     role: { type: String, enum: Object.values(UserRole), required: true, default: UserRole.PUBLIC, index: true },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } },
+  { timestamps: true },
 )
 
 export type UserDoc = InferSchemaType<typeof userSchema>
