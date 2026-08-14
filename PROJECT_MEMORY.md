@@ -1487,3 +1487,35 @@ The goal is to produce a system that is:
 Every line of code should serve the product or the research objective.
 
 **Build deliberately. Test continuously. Document decisions. Wait for approval. Move one stage at a time.**
+
+---
+
+# 36. LIVE DECISION LOG (Session Amendments)
+
+This section records decisions made during active development that amend or override defaults set earlier in this document. Later entries take precedence over earlier sections when they conflict. Do not delete history here — append.
+
+## 36.1 Database: MongoDB Atlas (overrides Section 4.2 / 17)
+
+**Decided:** 2026-08-14
+
+The project uses **MongoDB Atlas** (cloud-hosted MongoDB) as the database, with **Mongoose** as the ODM, instead of the originally documented SQLite + Prisma.
+
+- **Free status:** FREE WITH LIMITS — MongoDB Atlas M0 shared cluster tier (512MB storage, shared RAM/vCPU). No credit card required for M0. Sufficient for an academic prototype's data volume.
+- **Why chosen:** Explicit project owner decision — cloud DB simplifies access from anywhere and avoids local SQLite file management.
+- **Impact:** All schema design moves from relational tables (Section 17 table list) to Mongoose document collections with equivalent names: `users`, `wastebins`, `wastelevels`, `alerts`, `collectionrecords`, `reports`, `notifications`, `auditlogs`. Foreign keys become ObjectId references (`binId`, `userId`, `staffId`) with `.populate()` where needed. Prisma is dropped from the stack; `prisma/` folder in Section 10's folder structure is replaced by `server/src/models/` (Mongoose schemas) and `server/src/config/db.ts` (connection).
+- **Credentials:** The actual Atlas connection string (`MONGODB_URI`) must be supplied by the project owner via `.env` (never committed). Until provided, local development/testing of live DB connectivity is blocked — code will be written against the Mongoose interface and connection will be verified once the URI is supplied.
+- **Free-first policy status:** Compliant (free tier, no forced upgrade for prototype scope). No STOP-and-report needed since usage stays within M0 limits.
+
+## 36.2 Approval Gates: Continuous Mode (overrides Sections 14, 15 Step 10, 22)
+
+**Decided:** 2026-08-14
+
+The project owner has instructed: proceed through stages continuously without stopping for per-stage approval. Screenshot/CSS inspiration requests and STAGE COMPLETE summaries are still produced for visibility, but they are **not blocking** — implementation continues automatically to the next stage unless the owner says "stop."
+
+This does not waive the Paid-Service Rule (Section 4.3) or Change Management (Section 24) for genuinely risky/ambiguous decisions (e.g., destructive git operations, publishing/deploying, or paid services beyond free tiers) — those still pause for explicit confirmation.
+
+## 36.3 Landing Page Imagery (confirms Section 26)
+
+**Decided:** 2026-08-14
+
+Confirmed: Nigerian-context imagery should be used on the landing page and other public-facing pages where appropriate, sourced from properly licensed/free sources (e.g., Unsplash/Pexels free-license Nigerian photography), consistent with the existing Image Policy.
