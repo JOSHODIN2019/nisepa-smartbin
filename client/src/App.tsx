@@ -18,6 +18,8 @@ import { StaffDashboardPage } from '@/pages/staff/StaffDashboardPage'
 import { BinMonitoringPage } from '@/pages/staff/BinMonitoringPage'
 import { AlertCenterPage } from '@/pages/staff/AlertCenterPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
+import { AdminBinsPage } from '@/pages/admin/AdminBinsPage'
+import { AdminAlertsPage } from '@/pages/admin/AdminAlertsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function AppRoutes() {
@@ -61,9 +63,9 @@ function AppRoutes() {
       <Route element={<RequireAuth allowedRoles={['admin']} />}>
         <Route path="admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboardPage />} />
-          <Route path="bins" element={<PlaceholderPage title="Bin Management" stage="Stage 39" />} />
+          <Route path="bins" element={<AdminBinsPage />} />
           <Route path="users" element={<PlaceholderPage title="User Management" stage="Stage 38" />} />
-          <Route path="alerts" element={<PlaceholderPage title="Alert Management" stage="Stage 40" />} />
+          <Route path="alerts" element={<AdminAlertsPage />} />
           <Route path="collections" element={<PlaceholderPage title="Collection Records" stage="Stage 41" />} />
           <Route path="reports" element={<PlaceholderPage title="Reports" stage="Stage 42" />} />
           <Route path="settings" element={<PlaceholderPage title="Settings" stage="Stage 44" />} />

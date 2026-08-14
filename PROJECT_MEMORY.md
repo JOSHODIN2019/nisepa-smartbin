@@ -1596,6 +1596,21 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 
 **Design token fix:** the original status palette (`#22a860/#d97706/#ea580c/#dc2626`) failed the dataviz skill's palette validator (green under 3:1 contrast vs. surface). Darkened all four (`#15803d/#b45309/#9a3412/#b91c1c`) — now passes contrast; see `docs/DESIGN_SYSTEM.md` for the validator reasoning on why pairwise CVD-separation doesn't strictly apply to this ordered severity ramp (it's always paired with a text label/icon, never color-alone).
 
+## Phase 5 — Administrator
+
+| Stage | Status | Notes |
+|---|---|---|
+| 37 — Administrator Dashboard | ✅ Done | `/admin/dashboard` — reuses `StatTile`/`AlertList` from Staff, adds a "New issue reports" tile backed by a new admin-only `GET /api/issues` + `GET /api/issues/stats` (closes the loop on Stage 21's write-only issue reports — someone can finally see them). |
+| 38 — User Management | ⬜ Not started | |
+| 39 — Bin Management | 🟡 Partial | `/admin/bins` reuses `BinMonitoringTable` — read-only for now; create/edit/deactivate not built. |
+| 40 — Alert Management | ✅ Done | `/admin/alerts` — same `AlertList` component, unfiltered (admin sees everything, same data as Staff's Alert Center currently — no per-role filtering exists yet). |
+| 41 — Collection Records | ⬜ Not started | |
+| 42 — Reports | ⬜ Not started | Nav link exists, still a placeholder. |
+| 43 — System Activity | ⬜ Not started | |
+| 44 — Settings | ⬜ Not started | Nav link exists, still a placeholder. |
+
+Verified: RBAC re-confirmed with a fresh browser context — a Staff account visiting `/admin/dashboard` is redirected to `/`. Also confirmed the `DashboardLayout` mobile-responsive fix (from the Staff work) carries over correctly to Admin for free, since it's the same shared layout component — screenshotted at 390px width, no cramping.
+
 ## Next Stage
 
-**Stage 37 — Administrator Dashboard.** The Admin side (Phase 5) can reuse almost everything just built for Staff (`DashboardLayout`, `BinMonitoringTable`, `AlertList`, `StatTile`, the bins/alerts APIs) — Admin just needs broader scope (all bins/alerts, not filtered) plus its own not-yet-built areas (User Management Stage 38, Bin Management Stage 39, Reports Stage 42, Settings Stage 44).
+**Stage 39 (finish Bin Management: create/edit/deactivate)** or **Stage 38 (User Management)** are the two natural next pieces — both need new CRUD endpoints that don't exist yet (`POST/PATCH/DELETE /api/bins`, `GET/PATCH /api/users`). Recommend User Management next: it's what would let a real Admin create Staff accounts instead of relying on the `docs/DEMO_ACCOUNTS.md` seed.

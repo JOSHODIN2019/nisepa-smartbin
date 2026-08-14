@@ -8,3 +8,11 @@ export async function submitIssueReport(input: CreateIssueReportInput, reporterI
     locationText: input.locationText,
   })
 }
+
+export async function listIssueReports() {
+  return issueReportRepository.findAll()
+}
+
+export async function countNewIssueReports() {
+  return issueReportRepository.countByStatus('new')
+}
