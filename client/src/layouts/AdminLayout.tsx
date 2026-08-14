@@ -7,6 +7,7 @@ const adminNavItems = [
   { to: '/admin/alerts', label: 'Alerts' },
   { to: '/admin/collections', label: 'Collections' },
   { to: '/admin/reports', label: 'Reports' },
+  { to: '/admin/activity', label: 'System Activity' },
   { to: '/admin/settings', label: 'Settings' },
 ]
 

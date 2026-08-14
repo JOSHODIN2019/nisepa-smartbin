@@ -4,6 +4,7 @@ import { sendSuccess } from '../utils/apiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { createUserSchema, updateUserSchema } from '../validators/user.validator.js'
 import { listUsers, createStaffOrAdmin, updateUser } from '../services/user.service.js'
+import { logActivity } from '../services/audit.service.js'
 import type { UserDoc } from '../models/User.js'
 import type { HydratedDocument } from 'mongoose'
 
@@ -26,6 +27,7 @@ export const getUsers = asyncHandler(async (_req: Request, res: Response) => {
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const input = createUserSchema.parse(req.body)
   const user = await createStaffOrAdmin(input)
+  await logActivity(req.auth?.userId, 'user.create', 'User', user.id, { email: user.email, role: user.role })
   sendSuccess(res, { user: toUserDTO(user) }, 201)
 })
 
@@ -33,5 +35,7 @@ export const patchUser = asyncHandler(async (req: Request, res: Response) => {
   if (!req.auth) throw ApiError.unauthorized()
   const input = updateUserSchema.parse(req.body)
   const user = await updateUser(req.params.id as string, input, req.auth.userId)
+  const action = input.isActive === false ? 'user.deactivate' : input.isActive === true ? 'user.reactivate' : 'user.update'
+  await logActivity(req.auth.userId, action, 'User', user.id, input)
   sendSuccess(res, { user: toUserDTO(user) })
 })

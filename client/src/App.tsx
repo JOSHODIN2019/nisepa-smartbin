@@ -8,7 +8,6 @@ import { StaffLayout } from '@/layouts/StaffLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { LandingPage } from '@/pages/public/LandingPage'
 import { PublicDashboardPage } from '@/pages/public/PublicDashboardPage'
-import { PlaceholderPage } from '@/pages/public/PlaceholderPage'
 import { WasteInfoPage } from '@/pages/public/WasteInfoPage'
 import { SmartBinPage } from '@/pages/public/SmartBinPage'
 import { ReportIssuePage } from '@/pages/public/ReportIssuePage'
@@ -23,6 +22,9 @@ import { AdminAlertsPage } from '@/pages/admin/AdminAlertsPage'
 import { UserManagementPage } from '@/pages/admin/UserManagementPage'
 import { StaffCollectionsPage } from '@/pages/staff/StaffCollectionsPage'
 import { AdminCollectionsPage } from '@/pages/admin/AdminCollectionsPage'
+import { AdminReportsPage } from '@/pages/admin/AdminReportsPage'
+import { AdminActivityPage } from '@/pages/admin/AdminActivityPage'
+import { AdminSettingsPage } from '@/pages/admin/AdminSettingsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function AppRoutes() {
@@ -70,8 +72,9 @@ function AppRoutes() {
           <Route path="users" element={<UserManagementPage />} />
           <Route path="alerts" element={<AdminAlertsPage />} />
           <Route path="collections" element={<AdminCollectionsPage />} />
-          <Route path="reports" element={<PlaceholderPage title="Reports" stage="Stage 42" />} />
-          <Route path="settings" element={<PlaceholderPage title="Settings" stage="Stage 44" />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="activity" element={<AdminActivityPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
       </Route>
     </Routes>

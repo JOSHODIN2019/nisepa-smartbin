@@ -7,6 +7,7 @@ import { UserRole } from '../types/enums.js'
 import { notifyThresholdCrossed } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
 import { statusToAlertThreshold } from '../types/enums.js'
+import { logActivity } from '../services/audit.service.js'
 import type { WasteBinDoc } from '../models/WasteBin.js'
 import type { HydratedDocument } from 'mongoose'
 
@@ -39,12 +40,15 @@ export const getBinById = asyncHandler(async (req: Request, res: Response) => {
 export const postBin = asyncHandler(async (req: Request, res: Response) => {
   const input = createBinSchema.parse(req.body)
   const bin = await createBin(input)
+  await logActivity(req.auth?.userId, 'bin.create', 'WasteBin', bin.id, { code: bin.code, name: bin.name })
   sendSuccess(res, { bin: toBinDTO(bin) }, 201)
 })
 
 export const patchBin = asyncHandler(async (req: Request, res: Response) => {
   const input = updateBinSchema.parse(req.body)
   const bin = await updateBin(req.params.id as string, input)
+  const action = input.isActive === false ? 'bin.deactivate' : input.isActive === true ? 'bin.reactivate' : 'bin.update'
+  await logActivity(req.auth?.userId, action, 'WasteBin', bin.id, input)
   sendSuccess(res, { bin: toBinDTO(bin) })
 })
 
