@@ -2,13 +2,17 @@ import bcrypt from 'bcryptjs'
 import { User } from '../models/User.js'
 import { UserRole } from '../types/enums.js'
 
-// Demo Staff/Admin accounts for local development and academic demonstration
-// (PROJECT_MEMORY.md Section 32) — there is no admin User Management UI yet
-// (Stage 38) to create these otherwise. Clearly a seed/demo credential, never
-// used for a real deployment; documented in docs/DEMO_ACCOUNTS.md.
+// Demo accounts for one of each role, for local development and academic
+// demonstration (PROJECT_MEMORY.md Section 32). Staff/Admin are seeded
+// because there was no other way to create them before Stage 38 (User
+// Management) existed; now that it does, an Admin can create real ones from
+// /admin/users — this seed just guarantees a working login on first run.
+// Clearly demo credentials, never used for a real deployment; documented in
+// docs/DEMO_ACCOUNTS.md.
 const DEMO_PASSWORD = 'Password123!'
 
-const DEMO_STAFF_ACCOUNTS = [
+const DEMO_ACCOUNTS = [
+  { name: 'NISEPA Public Demo', email: 'public@nisepa.demo', role: UserRole.PUBLIC },
   { name: 'NISEPA Staff Demo', email: 'staff@nisepa.demo', role: UserRole.STAFF },
   { name: 'NISEPA Admin Demo', email: 'admin@nisepa.demo', role: UserRole.ADMIN },
 ]
@@ -18,7 +22,7 @@ export async function seedDemoStaffAccountsIfEmpty(): Promise<void> {
   if (existing > 0) return
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12)
-  await User.insertMany(DEMO_STAFF_ACCOUNTS.map((a) => ({ ...a, passwordHash })))
+  await User.insertMany(DEMO_ACCOUNTS.map((a) => ({ ...a, passwordHash })))
 
-  console.log(`[seed] created ${DEMO_STAFF_ACCOUNTS.length} demo staff/admin accounts (see docs/DEMO_ACCOUNTS.md)`)
+  console.log(`[seed] created ${DEMO_ACCOUNTS.length} demo accounts, one per role (see docs/DEMO_ACCOUNTS.md)`)
 }
