@@ -1601,7 +1601,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | Stage | Status | Notes |
 |---|---|---|
 | 37 — Administrator Dashboard | ✅ Done | `/admin/dashboard` — reuses `StatTile`/`AlertList` from Staff, adds a "New issue reports" tile backed by a new admin-only `GET /api/issues` + `GET /api/issues/stats` (closes the loop on Stage 21's write-only issue reports — someone can finally see them). |
-| 38 — User Management | ⬜ Not started | |
+| 38 — User Management | ✅ Done | `/admin/users` — admin-exclusive (Staff cannot access, per Section 6.3). Create Staff/Admin accounts, change role, activate/deactivate. Guards against self-demotion and self-deactivation (both client-disabled and server-enforced with dedicated error codes). Deactivated accounts are actually blocked from logging in (`login()` already checked `isActive`, reused here). |
 | 39 — Bin Management | 🟡 Partial | `/admin/bins` reuses `BinMonitoringTable` — read-only for now; create/edit/deactivate not built. |
 | 40 — Alert Management | ✅ Done | `/admin/alerts` — same `AlertList` component, unfiltered (admin sees everything, same data as Staff's Alert Center currently — no per-role filtering exists yet). |
 | 41 — Collection Records | ⬜ Not started | |
@@ -1613,4 +1613,4 @@ Verified: RBAC re-confirmed with a fresh browser context — a Staff account vis
 
 ## Next Stage
 
-**Stage 39 (finish Bin Management: create/edit/deactivate)** or **Stage 38 (User Management)** are the two natural next pieces — both need new CRUD endpoints that don't exist yet (`POST/PATCH/DELETE /api/bins`, `GET/PATCH /api/users`). Recommend User Management next: it's what would let a real Admin create Staff accounts instead of relying on the `docs/DEMO_ACCOUNTS.md` seed.
+**Stage 39 (finish Bin Management: create/edit/deactivate)** — the one remaining CRUD gap in Phase 4/5's monitoring surface. After that, Phases 4-5's core is essentially done except Collections (Stages 35/36/41) and Reports/Settings/System Activity (42-44), which are reasonable stopping points to check in with the project owner before continuing further, given how much has been built in this session.

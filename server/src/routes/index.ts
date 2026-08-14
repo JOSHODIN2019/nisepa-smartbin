@@ -5,6 +5,7 @@ import { binRouter } from './bin.routes.js'
 import { notificationRouter } from './notification.routes.js'
 import { issueReportRouter } from './issueReport.routes.js'
 import { alertRouter } from './alert.routes.js'
+import { userRouter } from './user.routes.js'
 
 export const apiRouter = Router()
 
@@ -17,6 +18,7 @@ apiRouter.use('/bins', binRouter)
 apiRouter.use('/notifications', notificationRouter)
 apiRouter.use('/issues', issueReportRouter)
 apiRouter.use('/alerts', alertRouter)
+apiRouter.use('/users', userRouter)
 
 // Remaining feature routers (collections, ...) are mounted here as each is
 // built in later roadmap stages.

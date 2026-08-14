@@ -11,4 +11,10 @@ export const userRepository = {
   create(input: { name: string; email: string; passwordHash: string; role: UserRole }) {
     return User.create(input)
   },
+  findAll() {
+    return User.find().sort({ createdAt: -1 })
+  },
+  updateById(id: string, input: { role?: UserRole; isActive?: boolean }) {
+    return User.findByIdAndUpdate(id, input, { returnDocument: 'after' })
+  },
 }

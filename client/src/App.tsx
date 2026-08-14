@@ -20,6 +20,7 @@ import { AlertCenterPage } from '@/pages/staff/AlertCenterPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminBinsPage } from '@/pages/admin/AdminBinsPage'
 import { AdminAlertsPage } from '@/pages/admin/AdminAlertsPage'
+import { UserManagementPage } from '@/pages/admin/UserManagementPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
 function AppRoutes() {
@@ -64,7 +65,7 @@ function AppRoutes() {
         <Route path="admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="bins" element={<AdminBinsPage />} />
-          <Route path="users" element={<PlaceholderPage title="User Management" stage="Stage 38" />} />
+          <Route path="users" element={<UserManagementPage />} />
           <Route path="alerts" element={<AdminAlertsPage />} />
           <Route path="collections" element={<PlaceholderPage title="Collection Records" stage="Stage 41" />} />
           <Route path="reports" element={<PlaceholderPage title="Reports" stage="Stage 42" />} />
