@@ -14,12 +14,14 @@ Defined in `client/src/index.css` using Tailwind CSS v4's `@theme` directive (CS
 - **Status** (waste-level semantics, see `PROJECT_MEMORY.md` Section 7):
   | Token | Hex | Range | Meaning |
   |---|---|---|---|
-  | `status-normal` | `#22a860` | 0–79% | Continue monitoring |
-  | `status-warning` | `#d97706` | 80–89% | Collection planning recommended |
-  | `status-high` | `#ea580c` | 90–99% | Immediate attention recommended |
-  | `status-full` | `#dc2626` | 100% | Collection required |
+  | `status-normal` | `#15803d` | 0–79% | Continue monitoring |
+  | `status-warning` | `#b45309` | 80–89% | Collection planning recommended |
+  | `status-high` | `#9a3412` | 90–99% | Immediate attention recommended |
+  | `status-full` | `#b91c1c` | 100% | Collection required |
 
   Each status has a paired `-bg` tint for badges/cards. **Per Section 29 (Accessibility), color is never the only signal** — every status UI must also carry a text label and/or icon (e.g. a warning triangle), not color alone.
+
+  Validated with the dataviz skill's `scripts/validate_palette.js` (run against `#15803d,#b45309,#9a3412,#b91c1c`, light mode) — all four pass the ≥3:1 contrast-vs-surface check. The pairwise CVD-separation check is scoped to arbitrary categorical/identity palettes, not an ordered severity ramp like this one (the validator's own scope note); the risk it guards against — two statuses reading as indistinguishable — is covered here by every status color always shipping with a text label and/or icon, never color alone.
 
 ## Radii
 

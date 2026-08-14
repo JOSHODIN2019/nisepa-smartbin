@@ -29,6 +29,19 @@ export const AlertThreshold = {
 } as const
 export type AlertThreshold = (typeof AlertThreshold)[keyof typeof AlertThreshold]
 
+export function statusToAlertThreshold(status: BinStatus): AlertThreshold | null {
+  switch (status) {
+    case BinStatus.WARNING:
+      return AlertThreshold.EIGHTY
+    case BinStatus.HIGH_PRIORITY:
+      return AlertThreshold.NINETY
+    case BinStatus.FULL:
+      return AlertThreshold.HUNDRED
+    default:
+      return null
+  }
+}
+
 export const AlertStatus = {
   NEW: 'new',
   ACKNOWLEDGED: 'acknowledged',

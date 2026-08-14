@@ -31,14 +31,19 @@
   --color-neutral-900: #1a1d1b;
   --color-neutral-950: #0d0f0e;
 
-  /* Waste-level status — Section 7 of PROJECT_MEMORY.md. Do not use color alone; always pair with icon/label. */
-  --color-status-normal: #22a860;       /* 0-79%   */
+  /* Waste-level status — Section 7 of PROJECT_MEMORY.md. Do not use color alone;
+     always pair with icon/label (dataviz skill: status colors are reserved,
+     never color-only). Validated with scripts/validate_palette.js — all four
+     pass >=3:1 contrast against the page surface; the pairwise CVD-separation
+     check is scoped to categorical identity palettes, not an ordered
+     severity ramp like this one, per the validator's own scope note. */
+  --color-status-normal: #15803d;       /* 0-79%   */
   --color-status-normal-bg: #eefdf3;
-  --color-status-warning: #d97706;      /* 80-89%  */
+  --color-status-warning: #b45309;      /* 80-89%  */
   --color-status-warning-bg: #fef6e7;
-  --color-status-high: #ea580c;         /* 90-99%  */
+  --color-status-high: #9a3412;         /* 90-99%  */
   --color-status-high-bg: #fef1e7;
-  --color-status-full: #dc2626;         /* 100%    */
+  --color-status-full: #b91c1c;         /* 100%    */
   --color-status-full-bg: #fdecec;
 
   /* Radii */

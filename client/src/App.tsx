@@ -15,6 +15,8 @@ import { ReportIssuePage } from '@/pages/public/ReportIssuePage'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
 import { StaffDashboardPage } from '@/pages/staff/StaffDashboardPage'
+import { BinMonitoringPage } from '@/pages/staff/BinMonitoringPage'
+import { AlertCenterPage } from '@/pages/staff/AlertCenterPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -50,8 +52,8 @@ function AppRoutes() {
       <Route element={<RequireAuth allowedRoles={['staff', 'admin']} />}>
         <Route path="staff" element={<StaffLayout />}>
           <Route path="dashboard" element={<StaffDashboardPage />} />
-          <Route path="bins" element={<PlaceholderPage title="Bin Monitoring" stage="Stage 31" />} />
-          <Route path="alerts" element={<PlaceholderPage title="Alert Center" stage="Stage 34" />} />
+          <Route path="bins" element={<BinMonitoringPage />} />
+          <Route path="alerts" element={<AlertCenterPage />} />
           <Route path="collections" element={<PlaceholderPage title="Collection Management" stage="Stage 35" />} />
         </Route>
       </Route>

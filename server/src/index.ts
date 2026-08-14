@@ -2,10 +2,12 @@ import { env } from './config/env.js'
 import { connectDatabase } from './config/db.js'
 import { createApp } from './app.js'
 import { seedDemoBinsIfEmpty } from './seed/bins.seed.js'
+import { seedDemoStaffAccountsIfEmpty } from './seed/users.seed.js'
 
 async function main() {
   await connectDatabase()
   await seedDemoBinsIfEmpty()
+  await seedDemoStaffAccountsIfEmpty()
 
   const app = createApp()
   app.listen(env.PORT, () => {
