@@ -1557,16 +1557,20 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 14 — Login | ✅ Done | Same `AuthLayout`. Full login→dashboard→logout loop browser-verified with zero console errors. |
 | 15 — Public Dashboard | ✅ Done | Greeting header, 3 quick-action cards (Smart Bin / Waste Info / Report an Issue — link to their still-placeholder stages), honest empty-state notifications panel (no fake data). |
 | 16 — Waste Information | ✅ Done | 4 threshold cards (Normal/Warning/High Priority/Full) mirroring Section 7's table, each with a distinct icon (not color alone, per Section 29) + a "Why it matters" explainer. |
-| 17 — Smart Bin Interaction | ⬜ Not started | |
-| 18 — 3D Smart Bin | ⬜ Not started | |
-| 19 — Waste Level Simulation | ⬜ Not started | |
+| 17 — Smart Bin Interaction | ✅ Done | `/smart-bin` lists real bins from the API; "Add simulated waste" button calls `POST /api/bins/:id/waste`, disables + relabels once a bin hits 100%. |
+| 18 — 3D Smart Bin | ✅ Done | `SmartBinVisual` — lightweight SVG bin (per Section 8: CSS/SVG fallback, no 3D engine), animated fill height/color transitions, status-colored, percentage label. |
+| 19 — Waste Level Simulation | ✅ Done | `addSimulatedWaste()` service: random 5-15% increase (clamped 0-100), recomputes status via `getBinStatus()`, persists both the bin snapshot and an append-only `WasteLevel` history row. |
 | 20 — Public Notifications | ⬜ Not started | |
 | 21 — Issue Reporting | ⬜ Not started | |
 
 ## Phases 3–7
 
-Not started (IoT Simulation, NISEPA Staff, Administrator, Optional Transaction Demo, Quality Assurance).
+Mostly not started, with one exception:
+
+- A slice of **Stage 22 (Simulated Sensor Service)**, **Stage 24 (IoT Data API)**, and **Stage 26 (Threshold Engine)** was pulled forward and built as part of Stages 17-19 above, because the Smart Bin Interaction screen needed real backend support to avoid faking data. What exists: `POST /api/bins/:id/waste` (the "sensor push" boundary), `getBinStatus()` threshold derivation, `WasteBin`/`WasteLevel` persistence, and a demo-bin seed (`server/src/seed/bins.seed.ts`, 5 real Minna/Niger State locations, auto-seeds on first run against an empty database).
+- **Not yet built** from Phase 3: Stage 23 (a distinct simulated-ESP32 abstraction layer — currently the bin service plays this role directly), Stage 25 (real-time push to connected clients — currently the client only sees updates it triggered itself, no live push to *other* open tabs/dashboards), Stage 27 (Alert Engine — threshold crossings are computed but no `Alert` documents are created yet), Stage 28 (Notification Engine), Stage 29 (Bin Status Engine — status sync exists inline in the bin service, not as its own module).
+- **Phases 4-7** (NISEPA Staff, Administrator, Optional Transaction Demo, Quality Assurance): not started.
 
 ## Next Stage
 
-**Stage 17 — Smart Bin Interaction.** This requires real backend support (bin list/detail + "add waste" endpoints) that doesn't exist yet — will need to pull forward a slice of Phase 3 (IoT Simulation, Stages 22-26) to make it functional rather than fake.
+**Stage 20 — Public Notifications**, then **Stage 21 — Issue Reporting**. After that, Phase 3's remaining pieces (Alert Engine, real-time push, Notification Engine) become necessary before Phase 4 (Staff dashboards) can show real alert data instead of another placeholder.

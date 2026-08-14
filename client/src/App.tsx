@@ -10,6 +10,7 @@ import { LandingPage } from '@/pages/public/LandingPage'
 import { PublicDashboardPage } from '@/pages/public/PublicDashboardPage'
 import { PlaceholderPage } from '@/pages/public/PlaceholderPage'
 import { WasteInfoPage } from '@/pages/public/WasteInfoPage'
+import { SmartBinPage } from '@/pages/public/SmartBinPage'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
 import { StaffDashboardPage } from '@/pages/staff/StaffDashboardPage'
@@ -30,7 +31,7 @@ function AppRoutes() {
       <Route element={<PublicLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="waste-info" element={<WasteInfoPage />} />
-        <Route path="smart-bin" element={<PlaceholderPage title="Smart Bin Interaction" stage="Stage 17–18" />} />
+        <Route path="smart-bin" element={<SmartBinPage />} />
         <Route path="report" element={<PlaceholderPage title="Report an Issue" stage="Stage 21" />} />
 
         <Route element={<RequireAuth allowedRoles={['public', 'staff', 'admin']} />}>
