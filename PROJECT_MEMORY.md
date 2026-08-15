@@ -1520,6 +1520,12 @@ This does not waive the Paid-Service Rule (Section 4.3) or Change Management (Se
 
 Confirmed: Nigerian-context imagery should be used on the landing page and other public-facing pages where appropriate, sourced from properly licensed/free sources (e.g., Unsplash/Pexels free-license Nigerian photography), consistent with the existing Image Policy.
 
+## 36.4 Phase 6 (Payment/Transaction Demo): Confirmed out of scope
+
+**Decided:** 2026-08-15
+
+Project owner confirmed Phase 6 (Stages 45-49 — Simulated Transaction, Payment Confirmation, Proof of Payment, SHA-256 Integrity Verification, Transaction Notifications) is **not needed**. This is a settled decision, not a deferral — do not build any of it, and do not re-raise it as a "next stage" suggestion. If the project scope changes later and payment/escrow-style features become relevant, that would be a new explicit request, treated as its own scope change per Section 24 (Change Management), not a resumption of Phase 6 as originally roadmapped.
+
 ---
 
 # 37. PROGRESS LOG
@@ -1631,10 +1637,9 @@ Full honest writeup in `docs/TESTING.md` — links every stage to real evidence 
 
 ## Current State
 
-**All of Phases 1-5 and the core of Phase 7 are complete.** Every route in the app has a real implementation — the last placeholder page (`PlaceholderPage.tsx`) was deleted from the codebase since nothing references it anymore. Total: 44 of 60 roadmap stages done (Phase 6's 5 optional stages deliberately skipped; Phase 7's remaining gaps are documented, not silently missing).
+**All of Phases 1-5 and the core of Phase 7 are complete.** Every route in the app has a real implementation — the last placeholder page (`PlaceholderPage.tsx`) was deleted from the codebase since nothing references it anymore. Total: 44 of 60 roadmap stages done. **Phase 6 is confirmed out of scope** (Section 36.4 — not deferred, settled). Phase 7's remaining gaps are documented in `docs/TESTING.md`, not silently missing.
 
 **Still needed from the project owner:**
 - A real `MONGODB_URI` (Atlas connection string) — all work has been verified against a temporary local MongoDB via `mongodb-memory-server`, never the real production database.
-- A decision on whether to build Phase 6 (optional transaction/payment demo) at all.
 - Whether to close the Stage 57-59 gaps (tablet testing, automated a11y audit, `npm audit`) before considering this "final."
 - **Deployment.** Nothing has been pushed to GitHub or deployed anywhere — Section 20's Git Workflow requires running tests, checking `.gitignore`, reviewing changed files, and getting explicit confirmation before any of that happens. All work so far is local commits only.
