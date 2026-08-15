@@ -12,7 +12,7 @@ export async function updateSettings(input: UpdateSettingsInput, updatedBy: stri
   const nextMax = input.simulatedWasteMaxPercent ?? current.simulatedWasteMaxPercent
 
   if (nextMin > nextMax) {
-    throw ApiError.badRequest('simulatedWasteMinPercent must be <= simulatedWasteMaxPercent', 'INVALID_RANGE')
+    throw ApiError.badRequest('Minimum % must be less than or equal to Maximum %', 'INVALID_RANGE')
   }
 
   return settingsRepository.update(input, updatedBy)

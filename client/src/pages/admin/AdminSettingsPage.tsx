@@ -42,14 +42,14 @@ export function AdminSettingsPage() {
   return (
     <div className="px-8 py-8">
       <h1 className="text-2xl font-semibold text-neutral-900">Settings</h1>
-      <p className="mt-1 text-neutral-500">System-wide configuration for the waste simulation.</p>
+      <p className="mt-1 text-neutral-500">System-wide configuration for waste level readings.</p>
 
       <form onSubmit={handleSubmit} className="mt-6 max-w-lg rounded-lg border border-neutral-200 bg-neutral-0 p-5">
-        <h2 className="text-sm font-semibold text-neutral-900">Simulated waste per interaction</h2>
+        <h2 className="text-sm font-semibold text-neutral-900">Waste reading range per interaction</h2>
         <p className="mt-1 text-xs text-neutral-500">
           Each time a public visitor clicks "Add simulated waste" without specifying an amount, the bin's level rises by a
-          random percentage in this range. This is the one part of the IoT simulation currently configurable — it does not
-          change the fixed 80% / 90% / 100% alert thresholds.
+          random percentage in this range. This is the one part of the sensor reading behavior currently configurable here
+          — it does not change the fixed 80% / 90% / 100% alert thresholds.
         </p>
 
         <div className="mt-4 grid grid-cols-2 gap-4">

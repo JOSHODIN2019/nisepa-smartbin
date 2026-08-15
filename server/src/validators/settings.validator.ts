@@ -7,6 +7,6 @@ export const updateSettingsSchema = z
   })
   .refine(
     (v) => v.simulatedWasteMinPercent === undefined || v.simulatedWasteMaxPercent === undefined || v.simulatedWasteMinPercent <= v.simulatedWasteMaxPercent,
-    { message: 'simulatedWasteMinPercent must be <= simulatedWasteMaxPercent' },
+    { message: 'Minimum % must be less than or equal to Maximum %' },
   )
 export type UpdateSettingsInput = z.infer<typeof updateSettingsSchema>

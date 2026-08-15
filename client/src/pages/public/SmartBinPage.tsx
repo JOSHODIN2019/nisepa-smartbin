@@ -89,8 +89,8 @@ export function SmartBinPage() {
     <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="text-3xl font-semibold text-neutral-900">Smart bin network</h1>
       <p className="mt-3 max-w-2xl text-neutral-600">
-        Every registered bin, roadside and household alike — visible to everyone, logged in or not. These bins
-        simulate real ultrasonic-sensor readings. Click "Add simulated waste" on any bin to see its level rise —
+        Every registered bin, roadside and household alike — visible to everyone, logged in or not. Each bin reports
+        its fill level from an ultrasonic sensor. Click "Add simulated waste" on any bin to see its level rise —
         the same update NISEPA staff and administrators see on their dashboards, live. A resident's own household
         bin also appears on their personal dashboard after logging in.
       </p>

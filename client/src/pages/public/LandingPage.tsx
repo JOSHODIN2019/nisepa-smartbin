@@ -7,7 +7,7 @@ import houseImage from '@/assets/images/housing-estate-lagos.jpg'
 import { FeatureCard } from '@/components/FeatureCard'
 
 const steps = [
-  { number: '01', title: 'Waste is added', description: 'A public user adds simulated waste to a smart bin near them.' },
+  { number: '01', title: 'Waste is added', description: 'A public user adds waste to a smart bin near them.' },
   { number: '02', title: 'Level updates', description: 'The bin’s fill level rises in real time and is recorded.' },
   { number: '03', title: 'Thresholds trigger alerts', description: 'At 80%, 90%, and 100% full, NISEPA staff and admins are notified.' },
   { number: '04', title: 'Collection is recorded', description: 'Staff collect the bin and log it — the level resets and history updates.' },
