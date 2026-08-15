@@ -1,12 +1,19 @@
 import { wasteBinRepository } from '../repositories/wasteBin.repository.js'
+import { userRepository } from '../repositories/user.repository.js'
 import { ApiError } from '../utils/ApiError.js'
-import { getBinStatus, BinStatus } from '../types/enums.js'
+import { getBinStatus, BinStatus, BinLocationType, UserRole } from '../types/enums.js'
 import { captureSensorReading } from '../simulations/esp32.simulation.js'
 
 // Staff/Admin see inactive bins too (they need to reactivate them); the
 // public smart-bin page only ever sees active bins.
 export async function listBins(includeInactive: boolean) {
   return includeInactive ? wasteBinRepository.findAll() : wasteBinRepository.findAllActive()
+}
+
+// A public resident's own dashboard — only the house bin(s) assigned to
+// them, never the shared roadside network (that's what /smart-bin is for).
+export async function listBinsForUser(userId: string) {
+  return wasteBinRepository.findAssignedToUser(userId)
 }
 
 export async function getBin(id: string) {
@@ -20,17 +27,61 @@ export async function getBinLevelHistory(id: string) {
   return wasteBinRepository.recentLevels(id)
 }
 
-export async function createBin(input: { code: string; name: string; address: string; capacityLiters: number }) {
+// A house bin's assignedUserId must reference an active public-role user —
+// never trust a client-supplied ID blindly, and never let a roadside bin
+// carry a leftover assignment from before it was switched.
+async function resolveAssignedUserId(
+  locationType: BinLocationType,
+  assignedUserId: string | null | undefined,
+): Promise<string | null> {
+  if (locationType === BinLocationType.ROADSIDE) return null
+  if (!assignedUserId) return null
+
+  const user = await userRepository.findById(assignedUserId)
+  if (!user || user.role !== UserRole.PUBLIC || !user.isActive) {
+    throw ApiError.badRequest('assignedUserId must reference an active public-role user', 'INVALID_BIN_ASSIGNMENT')
+  }
+  return assignedUserId
+}
+
+export async function createBin(input: {
+  code: string
+  name: string
+  address: string
+  capacityLiters: number
+  locationType?: BinLocationType
+  assignedUserId?: string
+}) {
   const existing = await wasteBinRepository.findByCode(input.code)
   if (existing) throw ApiError.conflict(`A bin with code "${input.code}" already exists`, 'BIN_CODE_IN_USE')
-  return wasteBinRepository.create(input)
+
+  const locationType = input.locationType ?? BinLocationType.ROADSIDE
+  const assignedUserId = await resolveAssignedUserId(locationType, input.assignedUserId)
+  return wasteBinRepository.create({ ...input, locationType, assignedUserId })
 }
 
 export async function updateBin(
   id: string,
-  input: { name?: string; address?: string; capacityLiters?: number; isActive?: boolean },
+  input: {
+    name?: string
+    address?: string
+    capacityLiters?: number
+    isActive?: boolean
+    locationType?: BinLocationType
+    assignedUserId?: string | null
+  },
 ) {
-  const bin = await wasteBinRepository.updateById(id, input)
+  const existing = await wasteBinRepository.findById(id)
+  if (!existing) throw ApiError.notFound('Bin not found')
+
+  const update: typeof input = { ...input }
+  if (input.locationType !== undefined || input.assignedUserId !== undefined) {
+    const locationType = input.locationType ?? (existing.locationType as BinLocationType)
+    const requestedAssignedUserId = input.assignedUserId !== undefined ? input.assignedUserId : existing.assignedUserId?.toString()
+    update.assignedUserId = await resolveAssignedUserId(locationType, requestedAssignedUserId)
+  }
+
+  const bin = await wasteBinRepository.updateById(id, update)
   if (!bin) throw ApiError.notFound('Bin not found')
   return bin
 }

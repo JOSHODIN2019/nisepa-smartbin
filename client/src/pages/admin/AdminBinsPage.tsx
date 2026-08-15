@@ -1,7 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { binsApi } from '@/features/bins/api'
 import { useLiveBins } from '@/features/bins/useLiveBins'
-import type { WasteBin } from '@/features/bins/types'
+import type { BinLocationType, WasteBin } from '@/features/bins/types'
+import { usersApi } from '@/features/users/api'
+import type { ManagedUser } from '@/features/users/types'
 import { BinMonitoringTable } from '@/components/BinMonitoringTable'
 import { FormField } from '@/components/FormField'
 import { ApiClientError } from '@/features/auth/AuthContext'
@@ -11,20 +13,39 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [capacityLiters, setCapacityLiters] = useState('240')
+  const [locationType, setLocationType] = useState<BinLocationType>('roadside')
+  const [assignedUserId, setAssignedUserId] = useState('')
+  const [residents, setResidents] = useState<ManagedUser[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    usersApi
+      .list()
+      .then(({ users }) => setResidents(users.filter((u) => u.role === 'public' && u.isActive)))
+      .catch(() => setResidents([]))
+  }, [])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
     setIsSubmitting(true)
     try {
-      const { bin } = await binsApi.create({ code, name, address, capacityLiters: Number(capacityLiters) })
+      const { bin } = await binsApi.create({
+        code,
+        name,
+        address,
+        capacityLiters: Number(capacityLiters),
+        locationType,
+        assignedUserId: locationType === 'house' && assignedUserId ? assignedUserId : undefined,
+      })
       onCreated(bin)
       setCode('')
       setName('')
       setAddress('')
       setCapacityLiters('240')
+      setLocationType('roadside')
+      setAssignedUserId('')
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Could not create the bin.')
     } finally {
@@ -48,6 +69,47 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
           value={capacityLiters}
           onChange={(e) => setCapacityLiters(e.target.value)}
         />
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="bin-location-type" className="block text-sm font-medium text-neutral-700">
+            Location type
+          </label>
+          <select
+            id="bin-location-type"
+            value={locationType}
+            onChange={(e) => {
+              setLocationType(e.target.value as BinLocationType)
+              if (e.target.value !== 'house') setAssignedUserId('')
+            }}
+            className="mt-1 w-full rounded-md border border-neutral-300 bg-neutral-0 px-3 py-2 text-sm text-neutral-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          >
+            <option value="roadside">Roadside (shared, public)</option>
+            <option value="house">Household (assigned to one resident)</option>
+          </select>
+        </div>
+
+        {locationType === 'house' && (
+          <div>
+            <label htmlFor="bin-assigned-user" className="block text-sm font-medium text-neutral-700">
+              Assign to resident
+            </label>
+            <select
+              id="bin-assigned-user"
+              value={assignedUserId}
+              onChange={(e) => setAssignedUserId(e.target.value)}
+              className="mt-1 w-full rounded-md border border-neutral-300 bg-neutral-0 px-3 py-2 text-sm text-neutral-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+            >
+              <option value="">Unassigned for now</option>
+              {residents?.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} ({u.email})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {error && (

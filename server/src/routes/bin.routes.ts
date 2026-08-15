@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { rateLimit } from 'express-rate-limit'
-import { getBins, getBinById, getBinLevels, addWaste, postBin, patchBin } from '../controllers/bin.controller.js'
+import { getBins, getMyBins, getBinById, getBinLevels, addWaste, postBin, patchBin } from '../controllers/bin.controller.js'
 import { attachAuthIfPresent, requireAuth } from '../middleware/auth.middleware.js'
 import { requireRole } from '../middleware/rbac.middleware.js'
 import { UserRole } from '../types/enums.js'
@@ -17,6 +17,9 @@ const addWasteLimiter = rateLimit({
 })
 
 binRouter.get('/', attachAuthIfPresent, getBins)
+// Must be registered before /:id — otherwise Express would treat "mine" as
+// an :id value.
+binRouter.get('/mine', requireAuth, getMyBins)
 binRouter.get('/:id', getBinById)
 binRouter.post('/:id/waste', addWasteLimiter, attachAuthIfPresent, addWaste)
 

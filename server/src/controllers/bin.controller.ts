@@ -2,7 +2,15 @@ import type { Request, Response } from 'express'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { sendSuccess } from '../utils/apiResponse.js'
 import { addWasteSchema, createBinSchema, updateBinSchema } from '../validators/bin.validator.js'
-import { listBins, getBin, getBinLevelHistory, addSimulatedWaste, createBin, updateBin } from '../services/wasteBin.service.js'
+import {
+  listBins,
+  listBinsForUser,
+  getBin,
+  getBinLevelHistory,
+  addSimulatedWaste,
+  createBin,
+  updateBin,
+} from '../services/wasteBin.service.js'
 import { UserRole } from '../types/enums.js'
 import { notifyThresholdCrossed, notifyStaffAndAdminOfAlert } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
@@ -13,6 +21,19 @@ import type { WasteBinDoc } from '../models/WasteBin.js'
 import type { HydratedDocument } from 'mongoose'
 
 function toBinDTO(bin: HydratedDocument<WasteBinDoc>) {
+  // Most queries populate assignedUserId (see the recurring unpopulated-ref
+  // bug documented in TESTING.md), but the "my bins" query intentionally
+  // doesn't — it's always the caller's own ID, so no other resident's name
+  // needs to leave the server. An unpopulated ref is still a Mongo ObjectId
+  // object (typeof 'object'), so detect "actually populated" by the
+  // presence of a `name` field rather than by typeof alone.
+  const rawAssignedUser = bin.assignedUserId as unknown as { id?: string; name?: string } | string | null
+  const assignedUser =
+    rawAssignedUser && typeof rawAssignedUser === 'object' && 'name' in rawAssignedUser
+      ? rawAssignedUser
+      : rawAssignedUser
+        ? { id: String(rawAssignedUser), name: undefined }
+        : null
   return {
     id: bin.id,
     code: bin.code,
@@ -24,6 +45,9 @@ function toBinDTO(bin: HydratedDocument<WasteBinDoc>) {
     isActive: bin.isActive,
     lastCollectedAt: bin.lastCollectedAt,
     updatedAt: bin.updatedAt,
+    locationType: bin.locationType,
+    assignedUserId: assignedUser?.id ?? null,
+    assignedUserName: assignedUser?.name ?? null,
   }
 }
 
@@ -31,6 +55,14 @@ export const getBins = asyncHandler(async (req: Request, res: Response) => {
   const includeInactive = req.auth?.role === UserRole.STAFF || req.auth?.role === UserRole.ADMIN
   const bins = await listBins(includeInactive)
   sendSuccess(res, { bins: bins.map(toBinDTO) })
+})
+
+// A public resident's own dashboard — house bins assigned to them only.
+// Deliberately unpopulated: it's always the caller's own ID, so there's no
+// reason to look up and expose a name here.
+export const getMyBins = asyncHandler(async (req: Request, res: Response) => {
+  const bins = await listBinsForUser(req.auth!.userId)
+  sendSuccess(res, { bins: bins.map((b) => toBinDTO(b as unknown as HydratedDocument<WasteBinDoc>)) })
 })
 
 export const getBinById = asyncHandler(async (req: Request, res: Response) => {

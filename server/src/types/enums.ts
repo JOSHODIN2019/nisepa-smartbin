@@ -5,6 +5,16 @@ export const UserRole = {
 } as const
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
+// A bin is either a shared roadside/community bin (visible to everyone, owned
+// by no one) or a household bin assigned to exactly one public-role resident
+// (visible to everyone on the Smart Bin page, but only that resident sees it
+// on their own dashboard).
+export const BinLocationType = {
+  ROADSIDE: 'roadside',
+  HOUSE: 'house',
+} as const
+export type BinLocationType = (typeof BinLocationType)[keyof typeof BinLocationType]
+
 // Waste-level thresholds — PROJECT_MEMORY.md Section 7. Single source of truth;
 // every status computation in the app must derive from this, never redefine the cutoffs.
 export const BinStatus = {

@@ -26,6 +26,7 @@ export function BinMonitoringTable({
           <tr className="border-b border-neutral-200 text-xs font-medium uppercase tracking-wide text-neutral-500">
             <th className="px-4 py-3">Bin</th>
             <th className="px-4 py-3">Location</th>
+            <th className="px-4 py-3">Type</th>
             <th className="px-4 py-3">Level</th>
             <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Last updated</th>
@@ -46,6 +47,17 @@ export function BinMonitoringTable({
                 <p className="text-xs text-neutral-500">{bin.code}</p>
               </td>
               <td className="px-4 py-3 text-neutral-600">{bin.location.address}</td>
+              <td className="px-4 py-3">
+                {bin.locationType === 'house' ? (
+                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
+                    Household{bin.assignedUserName ? ` · ${bin.assignedUserName}` : ' · unassigned'}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">
+                    Roadside
+                  </span>
+                )}
+              </td>
               <td className="px-4 py-3 font-medium tabular-nums text-neutral-900">{bin.currentLevelPercent}%</td>
               <td className="px-4 py-3">
                 {bin.isActive ? (

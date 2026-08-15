@@ -4,7 +4,7 @@ This is the honest record of what has actually been tested and how, per `PROJECT
 
 ## Automated tests
 
-`cd server && npm test` — 38 tests across 15 files, all passing as of this writing. Uses `mongodb-memory-server` (a real, ephemeral MongoDB instance, not a mock) + `supertest` driving the actual Express app, so these are integration tests against real HTTP + real database behavior, not unit tests with stubbed dependencies.
+`cd server && npm test` — 50 tests across 20 files, all passing as of this writing. Uses `mongodb-memory-server` (a real, ephemeral MongoDB instance, not a mock) + `supertest` driving the actual Express app, so these are integration tests against real HTTP + real database behavior, not unit tests with stubbed dependencies.
 
 | File | What it covers |
 |---|---|
@@ -13,6 +13,11 @@ This is the honest record of what has actually been tested and how, per `PROJECT
 | `auth.smoke.test.ts` | Register, duplicate-email conflict, login (good/bad), `/me`, logout |
 | `bins.smoke.test.ts` | Bin list/get, malformed-ID 400, level increase + clamping at 100% |
 | `binManagement.smoke.test.ts` | Bin CRUD, RBAC, duplicate-code rejection, active/inactive listing split |
+| `binOwnership.smoke.test.ts` | House vs roadside bins: assignment RBAC (public-only), roadside never carries an assignment, `/bins/mine` requires auth and returns only the caller's own bin(s), public listing never filtered by owner, switching house→roadside clears the assignment |
+| `binLevels.smoke.test.ts` | `/bins/:id/levels` history endpoint, staff/admin-only |
+| `events.smoke.test.ts` | Real SSE connection (raw `http` client), staff-scope event filtering |
+| `simulations.unit.test.ts` | Simulated sensor/ESP32 reading generation |
+| `staffNotifications.smoke.test.ts` | Staff/admin notification fan-out on threshold alerts |
 | `notifications.smoke.test.ts` | Threshold-triggered notifications, no duplicate on same-tier update, mark-read |
 | `issueReports.smoke.test.ts` / `issueReportsList.smoke.test.ts` | Anonymous + authenticated submission, validation, admin-only listing |
 | `alerts.smoke.test.ts` | Alert creation on threshold crossing, RBAC (401/403), acknowledge/resolve |

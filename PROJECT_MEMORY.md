@@ -1526,6 +1526,18 @@ Confirmed: Nigerian-context imagery should be used on the landing page and other
 
 Project owner confirmed Phase 6 (Stages 45-49 — Simulated Transaction, Payment Confirmation, Proof of Payment, SHA-256 Integrity Verification, Transaction Notifications) is **not needed**. This is a settled decision, not a deferral — do not build any of it, and do not re-raise it as a "next stage" suggestion. If the project scope changes later and payment/escrow-style features become relevant, that would be a new explicit request, treated as its own scope change per Section 24 (Change Management), not a resumption of Phase 6 as originally roadmapped.
 
+## 36.5 Post-completion feature: Household bin ownership + expanded imagery (new scope, post-55/55)
+
+**Decided:** 2026-08-15
+
+Requested after the original 55/55-stage roadmap was already complete — a genuinely new feature, not a stage that was missed:
+
+- **Bins now have a `locationType`:** `roadside` (shared/public, unowned — the original model) or `house` (assigned to exactly one public-role resident). Enforced server-side in `wasteBin.service.ts` (`resolveAssignedUserId`) — a house bin's `assignedUserId` must reference an active public-role user, and switching a bin back to roadside always clears the assignment, regardless of what a client sends.
+- **Visibility split:** a logged-in public resident's own dashboard (`/dashboard`) shows only their own house bin(s), via a new `GET /api/bins/mine` endpoint. The public Smart Bin page (`/smart-bin`) is unchanged in spirit — it still shows every bin, roadside and household alike, to everyone, logged in or not. Admins assign a bin to a resident from Bin Management (`AdminBinsPage.tsx`).
+- **Demo data:** one house bin ("No. 12 Bosso Close (Residence)") seeded and pre-assigned to `public@nisepa.demo` so the feature is visible on first run without manual setup.
+- **Imagery:** additional real Nigerian photography (market/street scenes, a household estate, a waste-pile documentary shot) sourced from Wikimedia Commons under CC BY-SA 4.0 / CC0 — see `docs/IMAGE_CREDITS.md` for full attribution. Used on the login/register split panel and two new Landing Page sections ("The problem NISEPA is solving," "Now reaching homes, not just roadsides"). Hover-lift/zoom effects (motion-safe, respecting `prefers-reduced-motion`) and global smooth scroll added alongside.
+- **Tests:** `tests/server/binOwnership.smoke.test.ts` (6 tests) covers the RBAC/validation rule (only public users can be assigned), that roadside bins never carry an assignment even if one is submitted, that `/mine` requires auth and returns only the caller's own bin(s), and that the public listing is never filtered by owner.
+
 ---
 
 # 37. PROGRESS LOG
@@ -1646,6 +1658,8 @@ Full honest writeup in `docs/TESTING.md` — links every stage to real evidence 
 **All of Phases 1-5 and all of Phase 7 (Stages 50-60) are complete.** Every route in the app has a real implementation — the last placeholder page (`PlaceholderPage.tsx`) was deleted from the codebase since nothing references it anymore. **55 of 55 in-scope roadmap stages done** (60 total minus Phase 6's 5 stages, confirmed out of scope per Section 36.4 — not deferred, settled).
 
 What that 55/55 does *not* mean: it doesn't mean zero remaining gaps anywhere, ever. `docs/TESTING.md` documents a small number of deliberately-scoped-out items (no screen-reader pass, no CSRF token, no formal penetration test, no automated visual-regression fixture set) — these were judgment calls about where a prototype's testing effort has diminishing returns, made explicitly and in writing, not silently skipped.
+
+**Since 55/55:** household bin ownership (Section 36.5) has been added as a genuinely new feature — bins can now be assigned to a specific public resident's house, not just roadside/shared. See 36.5 for the full breakdown.
 
 **Still needed from the project owner:**
 - A real `MONGODB_URI` (Atlas connection string) — all work has been verified against a temporary local MongoDB via `mongodb-memory-server`, never the real production database. This is the one thing that's been asked for repeatedly and still hasn't arrived.

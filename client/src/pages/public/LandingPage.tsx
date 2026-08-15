@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import heroImage from '@/assets/images/hero-lagos-street.jpg'
 import sunsetImage from '@/assets/images/section-nigeria-sunset.jpg'
+import marketImage from '@/assets/images/market-mile12-lagos.jpg'
+import wasteImage from '@/assets/images/waste-pile-kaduna.jpg'
+import houseImage from '@/assets/images/housing-estate-lagos.jpg'
 import { FeatureCard } from '@/components/FeatureCard'
 
 const steps = [
@@ -54,11 +57,11 @@ export function LandingPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="group relative overflow-hidden">
         <img
           src={heroImage}
           alt="An aerial view of a busy street market in Lagos, Nigeria"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 motion-safe:group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/70 to-neutral-950/40" />
 
@@ -67,19 +70,19 @@ export function LandingPage() {
             Smart Waste Monitoring for Niger State
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-neutral-200">
-            NISEPA SmartBin connects public waste bins to a live monitoring network — giving staff and
-            administrators the visibility they need to keep Niger State clean.
+            NISEPA SmartBin connects public and household waste bins to a live monitoring network — giving staff
+            and administrators the visibility they need to keep Niger State clean.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Link
               to="/register"
-              className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+              className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg"
             >
               Get started
             </Link>
             <Link
               to="/smart-bin"
-              className="rounded-md border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20"
+              className="rounded-md border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/20"
             >
               See the smart bin
             </Link>
@@ -98,12 +101,87 @@ export function LandingPage() {
 
         <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => (
-            <div key={step.number}>
+            <div
+              key={step.number}
+              className="rounded-lg p-3 transition-all duration-200 hover:-translate-y-1 hover:bg-neutral-0 hover:shadow-md"
+            >
               <span className="text-sm font-semibold text-brand-600">{step.number}</span>
               <h3 className="mt-2 text-base font-semibold text-neutral-900">{step.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-neutral-600">{step.description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* The problem */}
+      <section className="bg-neutral-0 py-20">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-6 lg:grid-cols-2">
+          <div className="group overflow-hidden rounded-xl shadow-sm">
+            <img
+              src={wasteImage}
+              alt="Uncollected waste piled up along a street in Kaduna State, Nigeria"
+              className="h-72 w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105 lg:h-96"
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl font-semibold text-neutral-900 sm:text-3xl">The problem NISEPA is solving</h2>
+            <p className="mt-4 text-neutral-600">
+              Across Niger State, waste that isn't tracked is waste that gets forgotten — piling up along roads and
+              drainage until it becomes a health hazard. Without visibility into which bins are full, collection
+              teams either arrive too late or waste trips on bins that barely need attention.
+            </p>
+            <p className="mt-4 text-neutral-600">
+              SmartBin closes that gap: every bin reports its level continuously, so NISEPA always knows exactly
+              where to send a truck next.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Bins reach homes too */}
+      <section className="py-20">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-6 lg:grid-cols-2">
+          <div className="order-2 lg:order-1">
+            <h2 className="text-2xl font-semibold text-neutral-900 sm:text-3xl">Now reaching homes, not just roadsides</h2>
+            <p className="mt-4 text-neutral-600">
+              SmartBin isn't limited to shared market and roadside bins. NISEPA can register a bin directly to a
+              household — once assigned, that resident sees their own bin's level right on their dashboard when
+              they sign in.
+            </p>
+            <p className="mt-4 text-neutral-600">
+              Everyone, logged in or not, can still browse the full network — roadside and household bins alike —
+              from the Smart Bin page.
+            </p>
+            <Link
+              to="/smart-bin"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 transition-colors hover:text-brand-800 hover:underline"
+            >
+              Browse the full network
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path
+                  fillRule="evenodd"
+                  d="M10.3 4.3a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4l3.3-3.3H3a1 1 0 1 1 0-2h10.6l-3.3-3.3a1 1 0 0 1 0-1.4Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Link>
+          </div>
+          <div className="order-1 grid grid-cols-2 gap-4 lg:order-2">
+            <div className="group col-span-2 overflow-hidden rounded-xl shadow-sm sm:col-span-1">
+              <img
+                src={houseImage}
+                alt="A residential housing estate in Lagos, Nigeria — the kind of household SmartBin now reaches"
+                className="h-56 w-full object-cover object-top transition-transform duration-500 motion-safe:group-hover:scale-105"
+              />
+            </div>
+            <div className="group col-span-2 overflow-hidden rounded-xl shadow-sm sm:col-span-1">
+              <img
+                src={marketImage}
+                alt="A busy market in Lagos, Nigeria, full of vendors and shoppers"
+                className="h-56 w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -126,11 +204,11 @@ export function LandingPage() {
       </section>
 
       {/* Mission strip */}
-      <section className="relative overflow-hidden">
+      <section className="group relative overflow-hidden">
         <img
           src={sunsetImage}
           alt="Sunset over a residential neighborhood in Nigeria"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 motion-safe:group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-neutral-950/70" />
         <div className="relative mx-auto max-w-3xl px-6 py-20 text-center">
@@ -141,7 +219,7 @@ export function LandingPage() {
           </p>
           <Link
             to="/register"
-            className="mt-8 inline-block rounded-md bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+            className="mt-8 inline-block rounded-md bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg"
           >
             Create your account
           </Link>

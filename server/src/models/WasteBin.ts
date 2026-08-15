@@ -1,5 +1,5 @@
 import { Schema, model, type InferSchemaType } from 'mongoose'
-import { BinStatus } from '../types/enums.js'
+import { BinStatus, BinLocationType } from '../types/enums.js'
 
 const wasteBinSchema = new Schema(
   {
@@ -15,6 +15,17 @@ const wasteBinSchema = new Schema(
     status: { type: String, enum: Object.values(BinStatus), required: true, default: BinStatus.NORMAL, index: true },
     isActive: { type: Boolean, default: true },
     lastCollectedAt: { type: Date },
+    locationType: {
+      type: String,
+      enum: Object.values(BinLocationType),
+      required: true,
+      default: BinLocationType.ROADSIDE,
+      index: true,
+    },
+    // Only set when locationType is 'house' — the one public-role resident
+    // who sees this bin on their personal dashboard. Never set for roadside
+    // bins; enforced in the service layer, not just left to convention.
+    assignedUserId: { type: Schema.Types.ObjectId, ref: 'User', default: null, index: true },
   },
   { timestamps: true },
 )

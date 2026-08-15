@@ -6,8 +6,10 @@ import { seedDemoStaffAccountsIfEmpty } from './seed/users.seed.js'
 
 async function main() {
   await connectDatabase()
-  await seedDemoBinsIfEmpty()
+  // Users must be seeded first — bin seeding assigns a demo house bin to the
+  // public demo account and needs its ID to already exist.
   await seedDemoStaffAccountsIfEmpty()
+  await seedDemoBinsIfEmpty()
 
   const app = createApp()
   app.listen(env.PORT, () => {

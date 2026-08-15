@@ -25,13 +25,20 @@ function BinCard({ bin, onAddWaste }: { bin: WasteBin; onAddWaste: (id: string) 
   const isFull = bin.currentLevelPercent >= 100
 
   return (
-    <div className="flex flex-col items-center rounded-lg border border-neutral-200 bg-neutral-0 p-6 text-center shadow-sm">
+    <div className="flex flex-col items-center rounded-lg border border-neutral-200 bg-neutral-0 p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-md">
       <SmartBinVisual levelPercent={bin.currentLevelPercent} status={bin.status} />
 
       <h3 className="mt-3 text-sm font-semibold text-neutral-900">{bin.name}</h3>
       <p className="text-xs text-neutral-500">{bin.location.address}</p>
-      <div className="mt-2">
+      <div className="mt-2 flex items-center gap-1.5">
         <StatusBadge status={bin.status} />
+        <span
+          className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium ${
+            bin.locationType === 'house' ? 'bg-brand-50 text-brand-700' : 'bg-neutral-100 text-neutral-600'
+          }`}
+        >
+          {bin.locationType === 'house' ? 'Household' : 'Roadside'}
+        </span>
       </div>
 
       <button
@@ -82,8 +89,10 @@ export function SmartBinPage() {
     <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="text-3xl font-semibold text-neutral-900">Smart bin network</h1>
       <p className="mt-3 max-w-2xl text-neutral-600">
-        These bins simulate real ultrasonic-sensor readings. Click "Add simulated waste" on any bin to see its
-        level rise — the same update NISEPA staff and administrators see on their dashboards, live.
+        Every registered bin, roadside and household alike — visible to everyone, logged in or not. These bins
+        simulate real ultrasonic-sensor readings. Click "Add simulated waste" on any bin to see its level rise —
+        the same update NISEPA staff and administrators see on their dashboards, live. A resident's own household
+        bin also appears on their personal dashboard after logging in.
       </p>
 
       {loadError && (
