@@ -8,7 +8,7 @@ export const userRepository = {
   findById(id: string) {
     return User.findById(id)
   },
-  create(input: { name: string; email: string; passwordHash: string; role: UserRole }) {
+  create(input: { name: string; email: string; passwordHash: string; role: UserRole; address?: string }) {
     return User.create(input)
   },
   findAll() {

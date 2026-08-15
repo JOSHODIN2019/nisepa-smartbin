@@ -38,7 +38,7 @@ describe('user management (Stage 38, admin-only)', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Rando', email: 'rando@example.com', password: 'password123' })
+      .send({ name: 'Rando', email: 'rando@example.com', password: 'password123', address: '4 Rando Close, Minna' })
     const publicCookie = registerRes.headers['set-cookie']
 
     const res = await request(app).get('/api/users').set('Cookie', publicCookie)
@@ -94,5 +94,20 @@ describe('user management (Stage 38, admin-only)', () => {
     const deactivateRes = await request(app).patch(`/api/users/${adminId}`).set('Cookie', cookie).send({ isActive: false })
     expect(deactivateRes.status).toBe(400)
     expect(deactivateRes.body.error.code).toBe('CANNOT_DEACTIVATE_SELF')
+  })
+
+  it("exposes a public resident's registered address to admin, so a bin can be installed at the right place", async () => {
+    const { createApp } = await import('../../server/src/app.js')
+    const request = (await import('supertest')).default
+    const app = createApp()
+    const { cookie } = await loginAsAdmin(app, request)
+
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Address Resident', email: 'address-resident@example.com', password: 'password123', address: '9 Address Way, Minna' })
+
+    const listRes = await request(app).get('/api/users').set('Cookie', cookie)
+    const resident = listRes.body.data.users.find((u: { email: string }) => u.email === 'address-resident@example.com')
+    expect(resident.address).toBe('9 Address Way, Minna')
   })
 })

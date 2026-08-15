@@ -46,7 +46,7 @@ describe('issue reports (Stage 21)', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Reporter', email: 'reporter@example.com', password: 'password123' })
+      .send({ name: 'Reporter', email: 'reporter@example.com', password: 'password123', address: '3 Reporter Lane, Minna' })
     const cookie = registerRes.headers['set-cookie']
     const userId = registerRes.body.data.user.id
 

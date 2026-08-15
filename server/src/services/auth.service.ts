@@ -36,6 +36,7 @@ export async function registerPublicUser(input: RegisterInput) {
     email: input.email,
     passwordHash,
     role: UserRole.PUBLIC,
+    address: input.address,
   })
 
   const token = signToken({ sub: user.id, role: user.role as UserRole })

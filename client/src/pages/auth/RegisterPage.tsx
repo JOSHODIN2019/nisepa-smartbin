@@ -9,6 +9,7 @@ export function RegisterPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [address, setAddress] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -17,7 +18,7 @@ export function RegisterPage() {
     setError(null)
     setIsSubmitting(true)
     try {
-      await register(name, email, password)
+      await register(name, email, password, address)
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Something went wrong. Please try again.')
@@ -60,6 +61,16 @@ export function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           hint="At least 8 characters."
+        />
+        <FormField
+          id="address"
+          label="Home address"
+          type="text"
+          required
+          autoComplete="street-address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          hint="So NISEPA knows where to install a bin for you, whenever one is assigned."
         />
 
         {error && (

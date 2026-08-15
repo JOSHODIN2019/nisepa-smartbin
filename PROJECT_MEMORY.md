@@ -1551,6 +1551,18 @@ Same-day refinements after the project owner reviewed 36.5 live:
 - **More demo residences:** seed data now creates 5 house bins (`NISEPA-BIN-006` through `010`), only the first assigned to `public@nisepa.demo` — the rest seeded unassigned, standing in for households NISEPA has registered a bin for but not yet linked to a login (the same "Unassigned for now" case Bin Management already supports).
 - **Tests:** `tests/server/binOwnership.smoke.test.ts` gained 2 more cases (the one-resident-one-bin conflict, and the false-conflict regression on re-saving an existing assignment); new `tests/server/binRemind.smoke.test.ts` (5 tests) covers auth, the not-full rejection, the ownership/RBAC rejection, the staff/admin notification fan-out, and the per-user rate limit.
 
+## 36.7 Registration model confirmed: self-registration first, bin assigned later + resident address
+
+**Decided:** 2026-08-15
+
+Project owner asked how sign-up should actually work, given a resident can't own a smart bin before NISEPA installs one. Confirmed model — self-registration stays open (already built), but the missing piece was a way to link an *existing* bin to a resident's account after the fact, not just at bin-creation time:
+
+- **Self-registration is the only path to a public account** — there is no admin-provisioned "create a resident + bin in one step" flow, and none was requested. A fresh public account has no bin, exactly as it did before this entry; the gap was purely on the assignment side.
+- **Existing bins can now be assigned after creation.** `BinMonitoringTable` grew an inline "assign resident" `<select>` on every residence row (admin context only, gated behind a new `onAssign` prop) — admin picks a resident from a live dropdown, `PATCH /api/bins/:id` with just `{ assignedUserId }` links them, no need to touch any other field. This is what makes "NISEPA installs a pre-existing unassigned bin, then links it to whichever resident it went to" actually possible; before this, `assignedUserId` could only be set in the create-bin form.
+- **Resident home address**, collected at registration (`RegisterPage.tsx`, required, min 5 chars) and stored on `User` (`address`, optional at the schema level so staff/admin/pre-existing accounts aren't affected). Surfaces in the admin resident dropdowns (both the create-bin form and the new inline assign control) as `Name — Address (email)`, so admin can actually tell residents apart by where they live, not just by email. Selecting a resident in the create-bin form also auto-fills the bin's own address field from the resident's registered address (only if that field is still empty — never overwrites a manual entry).
+- **Demo data:** the public demo account now has a registered address (`No. 12 Bosso Close, Minna, Niger State`) matching the house bin already assigned to it, so the demo shows a consistent resident↔bin↔address story out of the box.
+- **Tests:** `auth.smoke.test.ts` extended to assert address is required (400 without it) and round-trips through register/me; 4 other test files that call the real `/api/auth/register` endpoint updated to send an address (schema is now stricter, so every real registration call needed one); new `binOwnership.smoke.test.ts` case covers linking a pre-existing unassigned bin to a resident via a bare `{ assignedUserId }` PATCH; new `userManagement.smoke.test.ts` case confirms admin's `GET /api/users` exposes a resident's address.
+
 ---
 
 # 37. PROGRESS LOG

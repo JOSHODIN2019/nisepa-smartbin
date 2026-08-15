@@ -12,7 +12,10 @@ import { UserRole } from '../types/enums.js'
 const DEMO_PASSWORD = 'Password123!'
 
 const DEMO_ACCOUNTS = [
-  { name: 'NISEPA Public Demo', email: 'public@nisepa.demo', role: UserRole.PUBLIC },
+  // Address matches the house bin bins.seed.ts assigns to this account, so
+  // the demo shows a resident whose registered address and installed bin
+  // agree, the way a real household would.
+  { name: 'NISEPA Public Demo', email: 'public@nisepa.demo', role: UserRole.PUBLIC, address: 'No. 12 Bosso Close, Minna, Niger State' },
   { name: 'NISEPA Staff Demo', email: 'staff@nisepa.demo', role: UserRole.STAFF },
   { name: 'NISEPA Admin Demo', email: 'admin@nisepa.demo', role: UserRole.ADMIN },
 ]

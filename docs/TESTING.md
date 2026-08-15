@@ -4,16 +4,16 @@ This is the honest record of what has actually been tested and how, per `PROJECT
 
 ## Automated tests
 
-`cd server && npm test` — 57 tests across 21 files, all passing as of this writing. Uses `mongodb-memory-server` (a real, ephemeral MongoDB instance, not a mock) + `supertest` driving the actual Express app, so these are integration tests against real HTTP + real database behavior, not unit tests with stubbed dependencies.
+`cd server && npm test` — 59 tests across 21 files, all passing as of this writing. Uses `mongodb-memory-server` (a real, ephemeral MongoDB instance, not a mock) + `supertest` driving the actual Express app, so these are integration tests against real HTTP + real database behavior, not unit tests with stubbed dependencies.
 
 | File | What it covers |
 |---|---|
 | `db.smoke.test.ts` | DB connection, model creation defaults |
 | `health.smoke.test.ts` | `/api/health`, 404 envelope |
-| `auth.smoke.test.ts` | Register, duplicate-email conflict, login (good/bad), `/me`, logout |
+| `auth.smoke.test.ts` | Register (**now requires a home address, Section 36.7**), duplicate-email conflict, login (good/bad), `/me`, logout |
 | `bins.smoke.test.ts` | Bin list/get, malformed-ID 400, level increase + clamping at 100% |
 | `binManagement.smoke.test.ts` | Bin CRUD, RBAC, duplicate-code rejection, active/inactive listing split |
-| `binOwnership.smoke.test.ts` | House vs roadside bins: assignment RBAC (public-only), roadside never carries an assignment, `/bins/mine` requires auth and returns only the caller's own bin(s), public listing never filtered by owner, switching house→roadside clears the assignment, **one resident can't be assigned a second house bin**, re-saving a bin's own existing assignment isn't a false conflict |
+| `binOwnership.smoke.test.ts` | House vs roadside bins: assignment RBAC (public-only), roadside never carries an assignment, `/bins/mine` requires auth and returns only the caller's own bin(s), public listing never filtered by owner, switching house→roadside clears the assignment, one resident can't be assigned a second house bin, re-saving a bin's own existing assignment isn't a false conflict, **linking a pre-existing unassigned bin to a resident after the fact (Section 36.7)** |
 | `binRemind.smoke.test.ts` | "Remind NISEPA" (Section 36.6): requires auth, rejects a bin that isn't full, rejects a non-owner/non-staff caller, notifies every active staff/admin, per-user rate limit |
 | `binLevels.smoke.test.ts` | `/bins/:id/levels` history endpoint, staff/admin-only |
 | `events.smoke.test.ts` | Real SSE connection (raw `http` client), staff-scope event filtering |
@@ -22,7 +22,7 @@ This is the honest record of what has actually been tested and how, per `PROJECT
 | `notifications.smoke.test.ts` | Threshold-triggered notifications, no duplicate on same-tier update, mark-read |
 | `issueReports.smoke.test.ts` / `issueReportsList.smoke.test.ts` | Anonymous + authenticated submission, validation, admin-only listing |
 | `alerts.smoke.test.ts` | Alert creation on threshold crossing, RBAC (401/403), acknowledge/resolve |
-| `userManagement.smoke.test.ts` | RBAC, create/list/deactivate, self-demotion/self-deactivation guards, deactivated-account login block |
+| `userManagement.smoke.test.ts` | RBAC, create/list/deactivate, self-demotion/self-deactivation guards, deactivated-account login block, **a resident's registered address is exposed to admin (Section 36.7)** |
 | `collections.smoke.test.ts` | RBAC, full record-collection lifecycle, bin reset, **alert auto-resolution**, populated response fields |
 | `reports.smoke.test.ts` | RBAC, real aggregation math (not fabricated), populated response fields |
 | `auditLog.smoke.test.ts` | RBAC, real entry created on a real action |

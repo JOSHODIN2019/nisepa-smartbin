@@ -24,17 +24,23 @@ describe('auth + RBAC (Stage 08 & 09)', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Amaka Public', email: 'amaka@example.com', password: 'password123' })
+      .send({ name: 'Amaka Public', email: 'amaka@example.com', password: 'password123', address: '14 Tunga Road, Minna' })
     expect(registerRes.status).toBe(201)
     expect(registerRes.body.data.user.role).toBe('public')
+    expect(registerRes.body.data.user.address).toBe('14 Tunga Road, Minna')
     const cookie = registerRes.headers['set-cookie']
     expect(cookie).toBeDefined()
 
     const dupeRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Amaka Again', email: 'amaka@example.com', password: 'password123' })
+      .send({ name: 'Amaka Again', email: 'amaka@example.com', password: 'password123', address: '14 Tunga Road, Minna' })
     expect(dupeRes.status).toBe(409)
     expect(dupeRes.body.error.code).toBe('EMAIL_IN_USE')
+
+    const noAddressRes = await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'No Address', email: 'noaddress@example.com', password: 'password123' })
+    expect(noAddressRes.status).toBe(400)
 
     const badLoginRes = await request(app)
       .post('/api/auth/login')
@@ -49,6 +55,7 @@ describe('auth + RBAC (Stage 08 & 09)', () => {
     const meRes = await request(app).get('/api/auth/me').set('Cookie', cookie)
     expect(meRes.status).toBe(200)
     expect(meRes.body.data.user.email).toBe('amaka@example.com')
+    expect(meRes.body.data.user.address).toBe('14 Tunga Road, Minna')
 
     const meNoCookieRes = await request(app).get('/api/auth/me')
     expect(meNoCookieRes.status).toBe(401)
@@ -70,7 +77,7 @@ describe('auth + RBAC (Stage 08 & 09)', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Public Only', email: 'publiconly@example.com', password: 'password123' })
+      .send({ name: 'Public Only', email: 'publiconly@example.com', password: 'password123', address: '1 Chanchaga Road, Minna' })
     const cookie = registerRes.headers['set-cookie']
 
     // Standalone probe app to exercise requireAuth + requireRole directly,

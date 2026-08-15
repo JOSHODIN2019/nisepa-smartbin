@@ -289,4 +289,46 @@ describe('house-bin ownership (public dashboard shows only the resident\'s own b
     expect(updateRes.body.data.bin.assignedUserId).toBe(resident.id)
     expect(updateRes.body.data.bin.capacityLiters).toBe(150)
   })
+
+  it("links an already-registered, unassigned house bin to a resident after the fact — the bin and the account didn't have to be created together", async () => {
+    const { createApp } = await import('../../server/src/app.js')
+    const request = (await import('supertest')).default
+    const app = createApp()
+
+    const admin = await createUser('admin', 'owner-admin-8')
+    const adminCookie = await login(app, request, admin.email)
+
+    // The bin exists first, unassigned — standing in for NISEPA installing a
+    // bin before the resident ever signs up (or signing them up first with
+    // no bin, per project owner: self-registration never creates a bin).
+    const createRes = await request(app)
+      .post('/api/bins')
+      .set('Cookie', adminCookie)
+      .send({
+        code: 'HOUSE-8',
+        name: 'Pre-installed House Bin',
+        address: 'Minna',
+        capacityLiters: 100,
+        locationType: 'house',
+      })
+    const binId = createRes.body.data.bin.id
+    expect(createRes.body.data.bin.assignedUserId).toBeNull()
+
+    const resident = await createUser('public', 'owner-resident-8')
+
+    // Admin links the two later, via a plain PATCH with only assignedUserId
+    // — no need to resend locationType or any other field.
+    const assignRes = await request(app)
+      .patch(`/api/bins/${binId}`)
+      .set('Cookie', adminCookie)
+      .send({ assignedUserId: resident.id })
+    expect(assignRes.status).toBe(200)
+    expect(assignRes.body.data.bin.assignedUserId).toBe(resident.id)
+    expect(assignRes.body.data.bin.assignedUserName).toBe('owner-resident-8')
+
+    const residentCookie = await login(app, request, resident.email)
+    const mineRes = await request(app).get('/api/bins/mine').set('Cookie', residentCookie)
+    expect(mineRes.body.data.bins).toHaveLength(1)
+    expect(mineRes.body.data.bins[0].code).toBe('HOUSE-8')
+  })
 })

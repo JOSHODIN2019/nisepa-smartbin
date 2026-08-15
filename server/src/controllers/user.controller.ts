@@ -16,6 +16,7 @@ function toUserDTO(user: HydratedDocument<UserDoc>) {
     role: user.role,
     isActive: user.isActive,
     createdAt: user.createdAt,
+    address: user.address ?? '',
   }
 }
 

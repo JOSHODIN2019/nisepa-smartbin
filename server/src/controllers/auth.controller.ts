@@ -19,8 +19,8 @@ function setAuthCookie(res: Response, token: string) {
   })
 }
 
-function toPublicUser(user: { id: string; name: string; email: string; role: string }) {
-  return { id: user.id, name: user.name, email: user.email, role: user.role }
+function toPublicUser(user: { id: string; name: string; email: string; role: string; address?: string }) {
+  return { id: user.id, name: user.name, email: user.email, role: user.role, address: user.address ?? '' }
 }
 
 export const register = asyncHandler(async (req: Request, res: Response) => {

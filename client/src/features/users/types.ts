@@ -7,4 +7,5 @@ export interface ManagedUser {
   role: UserRole
   isActive: boolean
   createdAt: string
+  address: string
 }

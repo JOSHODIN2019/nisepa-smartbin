@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { StatusBadge } from '@/components/StatusBadge'
 import type { WasteBin } from '@/features/bins/types'
+import type { ManagedUser } from '@/features/users/types'
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
@@ -10,10 +11,18 @@ export function BinMonitoringTable({
   bins,
   detailBasePath,
   onToggleActive,
+  residents,
+  onAssign,
 }: {
   bins: WasteBin[]
   detailBasePath?: '/staff' | '/admin'
   onToggleActive?: (id: string, isActive: boolean) => void
+  // When provided (admin context only), a residence bin's row gets an inline
+  // "assign resident" control — covers the case where NISEPA installs a bin
+  // before or independently of a resident creating their account, and the
+  // two need to be linked later rather than only at bin-creation time.
+  residents?: ManagedUser[]
+  onAssign?: (binId: string, userId: string | null) => void
 }) {
   if (bins.length === 0) {
     return <p className="text-sm text-neutral-500">No bins registered yet.</p>
@@ -49,9 +58,27 @@ export function BinMonitoringTable({
               <td className="px-4 py-3 text-neutral-600">{bin.location.address}</td>
               <td className="px-4 py-3">
                 {bin.locationType === 'house' ? (
-                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-                    Residence{bin.assignedUserName ? ` · ${bin.assignedUserName}` : ' · unassigned'}
-                  </span>
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
+                      Residence{bin.assignedUserName ? ` · ${bin.assignedUserName}` : ' · unassigned'}
+                    </span>
+                    {onAssign && (
+                      <select
+                        aria-label={`Assign resident to ${bin.name}`}
+                        value={bin.assignedUserId ?? ''}
+                        onChange={(e) => onAssign(bin.id, e.target.value || null)}
+                        className="rounded-md border border-neutral-300 bg-neutral-0 px-1.5 py-1 text-xs text-neutral-700 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                      >
+                        <option value="">Unassigned</option>
+                        {residents?.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.name}
+                            {u.address ? ` — ${u.address}` : ''} ({u.email})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">
                     Roadside

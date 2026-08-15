@@ -69,7 +69,7 @@ describe('alert engine (Stage 27) + alert API', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Public Guy', email: 'publicguy@example.com', password: 'password123' })
+      .send({ name: 'Public Guy', email: 'publicguy@example.com', password: 'password123', address: '5 Public Guy Street, Minna' })
     const cookie = registerRes.headers['set-cookie']
 
     const res = await request(app).get('/api/alerts').set('Cookie', cookie)

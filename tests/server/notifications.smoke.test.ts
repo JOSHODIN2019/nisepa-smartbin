@@ -33,7 +33,7 @@ describe('notifications (Stage 20)', () => {
 
     const registerRes = await request(app)
       .post('/api/auth/register')
-      .send({ name: 'Notif User', email: 'notifuser@example.com', password: 'password123' })
+      .send({ name: 'Notif User', email: 'notifuser@example.com', password: 'password123', address: '2 Notif Street, Minna' })
     const cookie = registerRes.headers['set-cookie']
 
     // 40 -> 50-ish: stays "normal", should NOT create a notification.

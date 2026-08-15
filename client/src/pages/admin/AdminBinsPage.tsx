@@ -8,23 +8,26 @@ import { BinMonitoringTable } from '@/components/BinMonitoringTable'
 import { FormField } from '@/components/FormField'
 import { ApiClientError } from '@/features/auth/AuthContext'
 
-function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
+function CreateBinForm({ onCreated, residents }: { onCreated: (bin: WasteBin) => void; residents: ManagedUser[] | null }) {
   const [code, setCode] = useState('')
   const [name, setName] = useState('')
   const [address, setAddress] = useState('')
   const [capacityLiters, setCapacityLiters] = useState('240')
   const [locationType, setLocationType] = useState<BinLocationType>('roadside')
   const [assignedUserId, setAssignedUserId] = useState('')
-  const [residents, setResidents] = useState<ManagedUser[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    usersApi
-      .list()
-      .then(({ users }) => setResidents(users.filter((u) => u.role === 'public' && u.isActive)))
-      .catch(() => setResidents([]))
-  }, [])
+  function handleAssignedUserChange(userId: string) {
+    setAssignedUserId(userId)
+    // Convenience, not a hard override: pre-fill the bin's address from the
+    // resident's own registered address, since a residence bin usually goes
+    // exactly there — but never clobber an address the admin already typed.
+    if (userId && !address) {
+      const resident = residents?.find((u) => u.id === userId)
+      if (resident?.address) setAddress(resident.address)
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -98,13 +101,13 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
             <select
               id="bin-assigned-user"
               value={assignedUserId}
-              onChange={(e) => setAssignedUserId(e.target.value)}
+              onChange={(e) => handleAssignedUserChange(e.target.value)}
               className="mt-1 w-full rounded-md border border-neutral-300 bg-neutral-0 px-3 py-2 text-sm text-neutral-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
             >
               <option value="">Unassigned for now</option>
               {residents?.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.name} ({u.email})
+                  {u.name}{u.address ? ` — ${u.address}` : ''} ({u.email})
                 </option>
               ))}
             </select>
@@ -131,6 +134,14 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
 
 export function AdminBinsPage() {
   const { bins, setBins } = useLiveBins()
+  const [residents, setResidents] = useState<ManagedUser[] | null>(null)
+
+  useEffect(() => {
+    usersApi
+      .list()
+      .then(({ users }) => setResidents(users.filter((u) => u.role === 'public' && u.isActive)))
+      .catch(() => setResidents([]))
+  }, [])
 
   function handleCreated(bin: WasteBin) {
     setBins((prev) => (prev ? [bin, ...prev] : [bin]))
@@ -141,20 +152,34 @@ export function AdminBinsPage() {
     setBins((prev) => prev?.map((b) => (b.id === id ? bin : b)) ?? prev)
   }
 
+  // Links an already-registered (possibly already-installed) residence bin
+  // to a resident's account after the fact — covers the case where the bin
+  // and the account didn't come into existence at the same moment.
+  async function handleAssign(id: string, userId: string | null) {
+    const { bin } = await binsApi.update(id, { assignedUserId: userId })
+    setBins((prev) => prev?.map((b) => (b.id === id ? bin : b)) ?? prev)
+  }
+
   return (
     <div className="px-8 py-8">
       <h1 className="text-2xl font-semibold text-neutral-900">Bin management</h1>
       <p className="mt-1 text-neutral-500">Register new bins and deactivate ones no longer in service.</p>
 
       <div className="mt-6">
-        <CreateBinForm onCreated={handleCreated} />
+        <CreateBinForm onCreated={handleCreated} residents={residents} />
       </div>
 
       <div className="mt-6">
         {bins === null ? (
           <p className="text-sm text-neutral-500">Loading bins…</p>
         ) : (
-          <BinMonitoringTable bins={bins} detailBasePath="/admin" onToggleActive={handleToggleActive} />
+          <BinMonitoringTable
+            bins={bins}
+            detailBasePath="/admin"
+            onToggleActive={handleToggleActive}
+            residents={residents ?? undefined}
+            onAssign={handleAssign}
+          />
         )}
       </div>
     </div>

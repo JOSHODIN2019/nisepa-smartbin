@@ -8,6 +8,11 @@ const userSchema = new Schema(
     passwordHash: { type: String, required: true, select: false },
     role: { type: String, enum: Object.values(UserRole), required: true, default: UserRole.PUBLIC, index: true },
     isActive: { type: Boolean, default: true },
+    // A public resident's home address — collected at self-registration so
+    // NISEPA knows where to install a bin before one is ever assigned.
+    // Optional at the schema level (staff/admin accounts never set it, and
+    // it predates this field for any account created earlier).
+    address: { type: String, trim: true, default: '' },
   },
   { timestamps: true },
 )
