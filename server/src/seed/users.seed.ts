@@ -15,9 +15,9 @@ const DEMO_ACCOUNTS = [
   // Address matches the house bin bins.seed.ts assigns to this account, so
   // the demo shows a resident whose registered address and installed bin
   // agree, the way a real household would.
-  { name: 'NISEPA Public Demo', email: 'public@nisepa.demo', role: UserRole.PUBLIC, address: 'No. 12 Bosso Close, Minna, Niger State' },
-  { name: 'NISEPA Staff Demo', email: 'staff@nisepa.demo', role: UserRole.STAFF },
-  { name: 'NISEPA Admin Demo', email: 'admin@nisepa.demo', role: UserRole.ADMIN },
+  { name: 'NISEPA Public', email: 'public@nisepa.test', role: UserRole.PUBLIC, address: 'No. 12 Bosso Close, Minna, Niger State' },
+  { name: 'NISEPA Staff', email: 'staff@nisepa.test', role: UserRole.STAFF },
+  { name: 'NISEPA Admin', email: 'admin@nisepa.test', role: UserRole.ADMIN },
 ]
 
 export async function seedDemoStaffAccountsIfEmpty(): Promise<void> {

@@ -46,7 +46,7 @@ export async function seedDemoBinsIfEmpty(): Promise<void> {
     })),
   )
 
-  const publicDemoUser = await User.findOne({ email: 'public@nisepa.demo' })
+  const publicDemoUser = await User.findOne({ email: 'public@nisepa.test' })
   await WasteBin.insertMany(
     DEMO_HOUSE_BINS.map((b) => ({
       code: b.code,

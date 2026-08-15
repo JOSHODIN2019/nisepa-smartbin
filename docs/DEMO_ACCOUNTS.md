@@ -2,11 +2,13 @@
 
 For local development and academic demonstration only (`PROJECT_MEMORY.md` Section 32 — the prototype must be easy to demonstrate). Auto-seeded on first server start against an empty database (`server/src/seed/users.seed.ts`), the same way demo bins are seeded — one account per role, so a login is always available for a fresh demo.
 
-| Role | Email | Password |
-|---|---|---|
-| Public | `public@nisepa.demo` | `Password123!` |
-| Staff | `staff@nisepa.demo` | `Password123!` |
-| Admin | `admin@nisepa.demo` | `Password123!` |
+| Role | Name | Email | Password |
+|---|---|---|---|
+| Public | NISEPA Public | `public@nisepa.test` | `Password123!` |
+| Staff | NISEPA Staff | `staff@nisepa.test` | `Password123!` |
+| Admin | NISEPA Admin | `admin@nisepa.test` | `Password123!` |
+
+Display names and the email domain deliberately drop the word "demo" (project owner's preference — the account should look like a real NISEPA login, not a labeled test account). `.test` is still a safe, IANA-reserved domain (RFC 2606) that never resolves to a real mail server — same safety property `.demo` had, just without the word.
 
 Notes:
 

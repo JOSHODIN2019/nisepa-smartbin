@@ -1563,6 +1563,20 @@ Project owner asked how sign-up should actually work, given a resident can't own
 - **Demo data:** the public demo account now has a registered address (`No. 12 Bosso Close, Minna, Niger State`) matching the house bin already assigned to it, so the demo shows a consistent resident↔bin↔address story out of the box.
 - **Tests:** `auth.smoke.test.ts` extended to assert address is required (400 without it) and round-trips through register/me; 4 other test files that call the real `/api/auth/register` endpoint updated to send an address (schema is now stricter, so every real registration call needed one); new `binOwnership.smoke.test.ts` case covers linking a pre-existing unassigned bin to a resident via a bare `{ assignedUserId }` PATCH; new `userManagement.smoke.test.ts` case confirms admin's `GET /api/users` exposes a resident's address.
 
+## 36.8 Demo account names/emails: dropped the word "demo"
+
+**Decided:** 2026-08-15
+
+Project owner: the seeded accounts should read as real NISEPA logins, not obviously-labeled test accounts — same motivation as Section 36's earlier "simulated" copy pass. Changed in `server/src/seed/users.seed.ts`:
+
+| Role | Old name / email | New name / email |
+|---|---|---|
+| Public | NISEPA Public Demo / `public@nisepa.demo` | NISEPA Public / `public@nisepa.test` |
+| Staff | NISEPA Staff Demo / `staff@nisepa.demo` | NISEPA Staff / `staff@nisepa.test` |
+| Admin | NISEPA Admin Demo / `admin@nisepa.demo` | NISEPA Admin / `admin@nisepa.test` |
+
+Password unchanged (`Password123!`). Switched the domain from `.demo` to `.test` rather than dropping it entirely — `.test` is an IANA-reserved special-use TLD (RFC 2606) guaranteed to never resolve to a real mail server, the same safety property `.demo` was chosen for, just without the literal word. `bins.seed.ts`'s lookup of the public account (to pre-assign its house bin) updated to match. Internal identifiers (`DEMO_ACCOUNTS`, `seedDemoStaffAccountsIfEmpty`, code comments) were left alone — this is a display/credential change, not a rename of the seeding mechanism itself. Earlier entries in this log (36.5, 36.6) and the Stage 09 progress note below still say `.demo` because that's what was true when they were written — this is a rename, not a correction of those records.
+
 ---
 
 # 37. PROGRESS LOG
