@@ -86,7 +86,7 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
             className="mt-1 w-full rounded-md border border-neutral-300 bg-neutral-0 px-3 py-2 text-sm text-neutral-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           >
             <option value="roadside">Roadside (shared, public)</option>
-            <option value="house">Household (assigned to one resident)</option>
+            <option value="house">Residence (assigned to one resident)</option>
           </select>
         </div>
 

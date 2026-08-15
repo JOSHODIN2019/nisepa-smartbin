@@ -37,7 +37,7 @@ function BinCard({ bin, onAddWaste }: { bin: WasteBin; onAddWaste: (id: string) 
             bin.locationType === 'house' ? 'bg-brand-50 text-brand-700' : 'bg-neutral-100 text-neutral-600'
           }`}
         >
-          {bin.locationType === 'house' ? 'Household' : 'Roadside'}
+          {bin.locationType === 'house' ? 'Residence' : 'Roadside'}
         </span>
       </div>
 

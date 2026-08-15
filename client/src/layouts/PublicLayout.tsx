@@ -6,6 +6,7 @@ const navItems = [
   { to: '/', label: 'Home' },
   { to: '/waste-info', label: 'Waste Info' },
   { to: '/smart-bin', label: 'Smart Bin' },
+  { to: '/report', label: 'Report Issue' },
 ]
 
 export function PublicLayout() {

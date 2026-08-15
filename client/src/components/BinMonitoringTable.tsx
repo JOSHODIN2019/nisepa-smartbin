@@ -50,7 +50,7 @@ export function BinMonitoringTable({
               <td className="px-4 py-3">
                 {bin.locationType === 'house' ? (
                   <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-                    Household{bin.assignedUserName ? ` · ${bin.assignedUserName}` : ' · unassigned'}
+                    Residence{bin.assignedUserName ? ` · ${bin.assignedUserName}` : ' · unassigned'}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600">

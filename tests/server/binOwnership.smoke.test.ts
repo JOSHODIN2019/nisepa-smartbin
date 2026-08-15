@@ -212,4 +212,81 @@ describe('house-bin ownership (public dashboard shows only the resident\'s own b
     const mineRes = await request(app).get('/api/bins/mine').set('Cookie', residentCookie)
     expect(mineRes.body.data.bins).toHaveLength(0)
   })
+
+  it('rejects assigning a second house bin to a resident who already has one', async () => {
+    const { createApp } = await import('../../server/src/app.js')
+    const request = (await import('supertest')).default
+    const app = createApp()
+
+    const admin = await createUser('admin', 'owner-admin-6')
+    const adminCookie = await login(app, request, admin.email)
+    const resident = await createUser('public', 'owner-resident-6')
+
+    const firstRes = await request(app)
+      .post('/api/bins')
+      .set('Cookie', adminCookie)
+      .send({
+        code: 'HOUSE-6A',
+        name: 'First House Bin',
+        address: 'Minna',
+        capacityLiters: 100,
+        locationType: 'house',
+        assignedUserId: resident.id,
+      })
+    expect(firstRes.status).toBe(201)
+
+    const secondRes = await request(app)
+      .post('/api/bins')
+      .set('Cookie', adminCookie)
+      .send({
+        code: 'HOUSE-6B',
+        name: 'Second House Bin',
+        address: 'Minna',
+        capacityLiters: 100,
+        locationType: 'house',
+        assignedUserId: resident.id,
+      })
+    expect(secondRes.status).toBe(409)
+    expect(secondRes.body.error.code).toBe('RESIDENT_ALREADY_ASSIGNED')
+
+    // One resident, one house bin — the first assignment is untouched.
+    const residentCookie = await login(app, request, resident.email)
+    const mineRes = await request(app).get('/api/bins/mine').set('Cookie', residentCookie)
+    expect(mineRes.body.data.bins).toHaveLength(1)
+    expect(mineRes.body.data.bins[0].code).toBe('HOUSE-6A')
+  })
+
+  it('re-saving a house bin with its own existing assignment is not a false conflict', async () => {
+    const { createApp } = await import('../../server/src/app.js')
+    const request = (await import('supertest')).default
+    const app = createApp()
+
+    const admin = await createUser('admin', 'owner-admin-7')
+    const adminCookie = await login(app, request, admin.email)
+    const resident = await createUser('public', 'owner-resident-7')
+
+    const createRes = await request(app)
+      .post('/api/bins')
+      .set('Cookie', adminCookie)
+      .send({
+        code: 'HOUSE-7',
+        name: 'Stable House Bin',
+        address: 'Minna',
+        capacityLiters: 100,
+        locationType: 'house',
+        assignedUserId: resident.id,
+      })
+    const binId = createRes.body.data.bin.id
+
+    // Re-affirming locationType: 'house' without re-sending assignedUserId
+    // should keep the existing assignment, not reject it as a conflict with
+    // itself.
+    const updateRes = await request(app)
+      .patch(`/api/bins/${binId}`)
+      .set('Cookie', adminCookie)
+      .send({ locationType: 'house', capacityLiters: 150 })
+    expect(updateRes.status).toBe(200)
+    expect(updateRes.body.data.bin.assignedUserId).toBe(resident.id)
+    expect(updateRes.body.data.bin.capacityLiters).toBe(150)
+  })
 })

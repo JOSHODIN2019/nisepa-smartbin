@@ -13,6 +13,7 @@ export const binsApi = {
   get: (id: string) => api.get<{ bin: WasteBin }>(`/bins/${id}`),
   levels: (id: string) => api.get<{ levels: WasteLevelReading[] }>(`/bins/${id}/levels`),
   addWaste: (id: string) => api.post<{ bin: WasteBin }>(`/bins/${id}/waste`),
+  remind: (id: string) => api.post<{ message: string }>(`/bins/${id}/remind`),
   create: (input: {
     code: string
     name: string

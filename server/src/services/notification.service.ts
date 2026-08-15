@@ -51,3 +51,23 @@ export async function notifyStaffAndAdminOfAlert(binId: string, binName: string,
     ),
   )
 }
+
+// A resident-initiated reminder for a house bin that's already full. The
+// automatic threshold alert (notifyStaffAndAdminOfAlert) already fired once
+// when the bin first crossed 100% — this is a separate, explicit "it's
+// still sitting there" ping the resident can send if collection is late,
+// distinct from that one-time crossing notification.
+export async function notifyStaffOfResidentReminder(binId: string, binName: string) {
+  const staffAndAdmins = await userRepository.findActiveByRoles([UserRole.STAFF, UserRole.ADMIN])
+
+  await Promise.all(
+    staffAndAdmins.map((user) =>
+      notificationRepository.create({
+        userId: user.id,
+        title: `${binName} — resident reminder`,
+        message: `The resident has flagged that ${binName} is still full and awaiting collection.`,
+        relatedBinId: binId,
+      }),
+    ),
+  )
+}

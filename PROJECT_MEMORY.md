@@ -1538,6 +1538,19 @@ Requested after the original 55/55-stage roadmap was already complete — a genu
 - **Imagery:** additional real Nigerian photography (market/street scenes, a household estate, a waste-pile documentary shot) sourced from Wikimedia Commons under CC BY-SA 4.0 / CC0 — see `docs/IMAGE_CREDITS.md` for full attribution. Used on the login/register split panel and two new Landing Page sections ("The problem NISEPA is solving," "Now reaching homes, not just roadsides"). Hover-lift/zoom effects (motion-safe, respecting `prefers-reduced-motion`) and global smooth scroll added alongside.
 - **Tests:** `tests/server/binOwnership.smoke.test.ts` (6 tests) covers the RBAC/validation rule (only public users can be assigned), that roadside bins never carry an assignment even if one is submitted, that `/mine` requires auth and returns only the caller's own bin(s), and that the public listing is never filtered by owner.
 
+## 36.6 Follow-up refinements to 36.5: one bin per resident, "Remind NISEPA," dashboard cleanup
+
+**Decided:** 2026-08-15
+
+Same-day refinements after the project owner reviewed 36.5 live:
+
+- **One resident, one house bin.** `resolveAssignedUserId` in `wasteBin.service.ts` now also rejects assigning a house bin to a resident who already has a different one (`409 RESIDENT_ALREADY_ASSIGNED`), excluding the bin being updated from that check so re-saving a bin's own existing assignment isn't a false conflict. Fixed a related latent bug in the same pass: `updateBin` was calling `.toString()` on a *populated* `assignedUserId` (a `{id, name, email}` object, not a raw ObjectId) when preserving an existing assignment across an unrelated field edit — added `extractAssignedUserId()` to handle both populated and unpopulated shapes.
+- **"Remind NISEPA":** a full house bin's card on the public dashboard now shows a "Remind NISEPA" button (`POST /api/bins/:id/remind`) — a manual, resident-initiated follow-up ping distinct from the automatic threshold alert that already fired once when the bin first crossed 100%. Restricted to the bin's assigned resident or staff/admin (403 otherwise), only works on a bin that's actually full (400 `BIN_NOT_FULL` otherwise), and rate-limited to 3 per 10 minutes **per authenticated user** (not per IP — the limiter runs after `requireAuth` specifically so it can key on `req.auth.userId`, using the library's `ipKeyGenerator` helper for the anonymous fallback case).
+- **Dashboard cleanup:** removed the "View the smart bin" / "Waste information" / "Report an issue" quick-action cards from the public dashboard (project owner: not needed, the resident's bin status is enough). "Report an issue" had no other entry point, so it was added to the public top nav (`PublicLayout.tsx`) instead of being orphaned.
+- **Labeling:** the bin-type badge staff/admin see in `BinMonitoringTable` and the public `SmartBinPage` was renamed from "Household" to "Residence" (project owner's wording preference).
+- **More demo residences:** seed data now creates 5 house bins (`NISEPA-BIN-006` through `010`), only the first assigned to `public@nisepa.demo` — the rest seeded unassigned, standing in for households NISEPA has registered a bin for but not yet linked to a login (the same "Unassigned for now" case Bin Management already supports).
+- **Tests:** `tests/server/binOwnership.smoke.test.ts` gained 2 more cases (the one-resident-one-bin conflict, and the false-conflict regression on re-saving an existing assignment); new `tests/server/binRemind.smoke.test.ts` (5 tests) covers auth, the not-full rejection, the ownership/RBAC rejection, the staff/admin notification fan-out, and the per-user rate limit.
+
 ---
 
 # 37. PROGRESS LOG

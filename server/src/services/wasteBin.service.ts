@@ -28,11 +28,15 @@ export async function getBinLevelHistory(id: string) {
 }
 
 // A house bin's assignedUserId must reference an active public-role user —
-// never trust a client-supplied ID blindly, and never let a roadside bin
-// carry a leftover assignment from before it was switched.
+// never trust a client-supplied ID blindly, never let a roadside bin carry a
+// leftover assignment from before it was switched, and never let one
+// resident end up with two house bins at once (one resident, one house
+// bin). `currentBinId` excludes the bin being updated from that last check,
+// so re-saving a house bin's own existing assignment isn't a false conflict.
 async function resolveAssignedUserId(
   locationType: BinLocationType,
   assignedUserId: string | null | undefined,
+  currentBinId?: string,
 ): Promise<string | null> {
   if (locationType === BinLocationType.ROADSIDE) return null
   if (!assignedUserId) return null
@@ -41,7 +45,28 @@ async function resolveAssignedUserId(
   if (!user || user.role !== UserRole.PUBLIC || !user.isActive) {
     throw ApiError.badRequest('assignedUserId must reference an active public-role user', 'INVALID_BIN_ASSIGNMENT')
   }
+
+  const existingBins = await wasteBinRepository.findAssignedToUser(assignedUserId)
+  const conflictingBin = existingBins.find((b) => b.id !== currentBinId)
+  if (conflictingBin) {
+    throw ApiError.conflict(
+      `${user.name} already has a bin assigned (${conflictingBin.code}) — one resident, one house bin`,
+      'RESIDENT_ALREADY_ASSIGNED',
+    )
+  }
+
   return assignedUserId
+}
+
+// A populated assignedUserId comes back as { id, name, email }; an
+// unpopulated one is a bare ObjectId. Either way, resolve it to a plain ID
+// string (or undefined if there's no assignment).
+function extractAssignedUserId(assignedUserId: unknown): string | undefined {
+  if (!assignedUserId) return undefined
+  if (typeof assignedUserId === 'object' && 'id' in (assignedUserId as object)) {
+    return (assignedUserId as { id: string }).id
+  }
+  return String(assignedUserId)
 }
 
 export async function createBin(input: {
@@ -77,8 +102,9 @@ export async function updateBin(
   const update: typeof input = { ...input }
   if (input.locationType !== undefined || input.assignedUserId !== undefined) {
     const locationType = input.locationType ?? (existing.locationType as BinLocationType)
-    const requestedAssignedUserId = input.assignedUserId !== undefined ? input.assignedUserId : existing.assignedUserId?.toString()
-    update.assignedUserId = await resolveAssignedUserId(locationType, requestedAssignedUserId)
+    const requestedAssignedUserId =
+      input.assignedUserId !== undefined ? input.assignedUserId : extractAssignedUserId(existing.assignedUserId)
+    update.assignedUserId = await resolveAssignedUserId(locationType, requestedAssignedUserId, id)
   }
 
   const bin = await wasteBinRepository.updateById(id, update)

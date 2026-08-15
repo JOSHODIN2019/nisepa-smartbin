@@ -11,12 +11,13 @@ import {
   createBin,
   updateBin,
 } from '../services/wasteBin.service.js'
-import { UserRole } from '../types/enums.js'
-import { notifyThresholdCrossed, notifyStaffAndAdminOfAlert } from '../services/notification.service.js'
+import { UserRole, BinStatus } from '../types/enums.js'
+import { notifyThresholdCrossed, notifyStaffAndAdminOfAlert, notifyStaffOfResidentReminder } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
 import { statusToAlertThreshold } from '../types/enums.js'
 import { logActivity } from '../services/audit.service.js'
 import { emitEvent } from '../realtime/eventBus.js'
+import { ApiError } from '../utils/ApiError.js'
 import type { WasteBinDoc } from '../models/WasteBin.js'
 import type { HydratedDocument } from 'mongoose'
 
@@ -92,6 +93,29 @@ export const patchBin = asyncHandler(async (req: Request, res: Response) => {
   await logActivity(req.auth?.userId, action, 'WasteBin', bin.id, input)
   emitEvent({ type: 'bin.updated', scope: 'public', data: toBinDTO(bin) })
   sendSuccess(res, { bin: toBinDTO(bin) })
+})
+
+// A resident (or staff/admin) manually pinging NISEPA that a full bin is
+// still awaiting collection — distinct from the automatic threshold alert
+// that already fired once when the bin first crossed 100%.
+export const remindFullBin = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.auth) throw ApiError.unauthorized()
+
+  const bin = await getBin(req.params.id as string)
+  if (bin.status !== BinStatus.FULL) {
+    throw ApiError.badRequest('Only a full bin can be reminded', 'BIN_NOT_FULL')
+  }
+
+  const dto = toBinDTO(bin)
+  const isOwner = dto.assignedUserId !== null && dto.assignedUserId === req.auth.userId
+  const isStaffOrAdmin = req.auth.role === UserRole.STAFF || req.auth.role === UserRole.ADMIN
+  if (!isOwner && !isStaffOrAdmin) throw ApiError.forbidden()
+
+  await notifyStaffOfResidentReminder(bin.id, bin.name)
+  await logActivity(req.auth.userId, 'bin.remind', 'WasteBin', bin.id, {})
+  emitEvent({ type: 'notification.created', scope: 'staff', data: { binId: bin.id } })
+
+  sendSuccess(res, { message: 'NISEPA has been notified.' })
 })
 
 export const addWaste = asyncHandler(async (req: Request, res: Response) => {
