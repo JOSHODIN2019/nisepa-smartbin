@@ -8,6 +8,7 @@ import { notifyThresholdCrossed } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
 import { statusToAlertThreshold } from '../types/enums.js'
 import { logActivity } from '../services/audit.service.js'
+import { emitEvent } from '../realtime/eventBus.js'
 import type { WasteBinDoc } from '../models/WasteBin.js'
 import type { HydratedDocument } from 'mongoose'
 
@@ -41,6 +42,7 @@ export const postBin = asyncHandler(async (req: Request, res: Response) => {
   const input = createBinSchema.parse(req.body)
   const bin = await createBin(input)
   await logActivity(req.auth?.userId, 'bin.create', 'WasteBin', bin.id, { code: bin.code, name: bin.name })
+  emitEvent({ type: 'bin.updated', scope: 'public', data: toBinDTO(bin) })
   sendSuccess(res, { bin: toBinDTO(bin) }, 201)
 })
 
@@ -49,17 +51,20 @@ export const patchBin = asyncHandler(async (req: Request, res: Response) => {
   const bin = await updateBin(req.params.id as string, input)
   const action = input.isActive === false ? 'bin.deactivate' : input.isActive === true ? 'bin.reactivate' : 'bin.update'
   await logActivity(req.auth?.userId, action, 'WasteBin', bin.id, input)
+  emitEvent({ type: 'bin.updated', scope: 'public', data: toBinDTO(bin) })
   sendSuccess(res, { bin: toBinDTO(bin) })
 })
 
 export const addWaste = asyncHandler(async (req: Request, res: Response) => {
   const { amountPercent } = addWasteSchema.parse(req.body ?? {})
   const { bin, thresholdCrossedInto } = await addSimulatedWaste(req.params.id as string, amountPercent)
+  emitEvent({ type: 'bin.updated', scope: 'public', data: toBinDTO(bin) })
 
   if (thresholdCrossedInto) {
     const threshold = statusToAlertThreshold(thresholdCrossedInto)
     if (threshold) {
-      await raiseThresholdAlert(bin.id, bin.name, threshold, thresholdCrossedInto)
+      const alert = await raiseThresholdAlert(bin.id, bin.name, threshold, thresholdCrossedInto)
+      emitEvent({ type: 'alert.created', scope: 'staff', data: { alertId: alert.id, binId: bin.id, binName: bin.name } })
     }
     // The acting user also gets a personal confirmation — separate from the
     // staff/admin-facing Alert created above.

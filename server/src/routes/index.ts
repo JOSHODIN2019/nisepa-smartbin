@@ -10,6 +10,7 @@ import { collectionRouter } from './collection.routes.js'
 import { reportRouter } from './report.routes.js'
 import { auditLogRouter } from './auditLog.routes.js'
 import { settingsRouter } from './settings.routes.js'
+import { eventsRouter } from './events.routes.js'
 
 export const apiRouter = Router()
 
@@ -27,3 +28,4 @@ apiRouter.use('/collections', collectionRouter)
 apiRouter.use('/reports', reportRouter)
 apiRouter.use('/activity', auditLogRouter)
 apiRouter.use('/settings', settingsRouter)
+apiRouter.use('/events', eventsRouter)

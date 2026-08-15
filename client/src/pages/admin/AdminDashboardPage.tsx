@@ -1,23 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
-import { binsApi } from '@/features/bins/api'
 import { alertsApi } from '@/features/alerts/api'
 import { issuesApi } from '@/features/issues/api'
-import type { WasteBin } from '@/features/bins/types'
-import type { Alert } from '@/features/alerts/types'
+import { useLiveBins } from '@/features/bins/useLiveBins'
+import { useLiveAlerts } from '@/features/alerts/useLiveAlerts'
 import { StatTile } from '@/components/StatTile'
 import { AlertList } from '@/components/AlertList'
 
 export function AdminDashboardPage() {
   const { user } = useAuth()
-  const [bins, setBins] = useState<WasteBin[] | null>(null)
-  const [alerts, setAlerts] = useState<Alert[] | null>(null)
+  const { bins } = useLiveBins()
+  const { alerts, setAlerts } = useLiveAlerts()
   const [newReportCount, setNewReportCount] = useState<number | null>(null)
 
   useEffect(() => {
-    binsApi.list().then(({ bins }) => setBins(bins))
-    alertsApi.list().then(({ alerts }) => setAlerts(alerts))
     issuesApi.stats().then(({ newCount }) => setNewReportCount(newCount))
   }, [])
 
@@ -37,7 +34,7 @@ export function AdminDashboardPage() {
   return (
     <div className="px-8 py-8">
       <h1 className="text-2xl font-semibold text-neutral-900">Welcome, {user?.name}</h1>
-      <p className="mt-1 text-neutral-500">System-wide overview of the SmartBin network.</p>
+      <p className="mt-1 text-neutral-500">System-wide overview of the SmartBin network, live.</p>
 
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
         <StatTile label="Registered bins" value={bins?.length ?? 0} accentBg="bg-neutral-100" accentDot="bg-neutral-400" />

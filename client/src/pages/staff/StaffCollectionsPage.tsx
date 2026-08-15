@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { binsApi } from '@/features/bins/api'
 import { collectionsApi } from '@/features/collections/api'
+import { useLiveBins } from '@/features/bins/useLiveBins'
 import type { WasteBin } from '@/features/bins/types'
 import type { CollectionRecord } from '@/features/collections/types'
 import { StatusBadge } from '@/components/StatusBadge'
 import { CollectionHistoryTable } from '@/components/CollectionHistoryTable'
 import { ApiClientError } from '@/features/auth/AuthContext'
+import { useEventStream } from '@/lib/useEventStream'
 
 function NeedsCollectionRow({
   bin,
@@ -63,13 +64,15 @@ function NeedsCollectionRow({
 }
 
 export function StaffCollectionsPage() {
-  const [bins, setBins] = useState<WasteBin[] | null>(null)
+  const { bins, setBins } = useLiveBins()
   const [records, setRecords] = useState<CollectionRecord[] | null>(null)
 
-  useEffect(() => {
-    binsApi.list().then(({ bins }) => setBins(bins))
+  function refetchRecords() {
     collectionsApi.list().then(({ records }) => setRecords(records))
-  }, [])
+  }
+
+  useEffect(refetchRecords, [])
+  useEventStream({ 'collection.recorded': refetchRecords })
 
   async function handleCollected(binId: string, notes: string) {
     const { record } = await collectionsApi.record(binId, notes || undefined)

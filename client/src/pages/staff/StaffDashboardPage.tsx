@@ -1,22 +1,15 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
-import { binsApi } from '@/features/bins/api'
 import { alertsApi } from '@/features/alerts/api'
-import type { WasteBin } from '@/features/bins/types'
-import type { Alert } from '@/features/alerts/types'
+import { useLiveBins } from '@/features/bins/useLiveBins'
+import { useLiveAlerts } from '@/features/alerts/useLiveAlerts'
 import { StatTile } from '@/components/StatTile'
 import { AlertList } from '@/components/AlertList'
 
 export function StaffDashboardPage() {
   const { user } = useAuth()
-  const [bins, setBins] = useState<WasteBin[] | null>(null)
-  const [alerts, setAlerts] = useState<Alert[] | null>(null)
-
-  useEffect(() => {
-    binsApi.list().then(({ bins }) => setBins(bins))
-    alertsApi.list().then(({ alerts }) => setAlerts(alerts))
-  }, [])
+  const { bins } = useLiveBins()
+  const { alerts, setAlerts } = useLiveAlerts()
 
   async function handleAcknowledge(id: string) {
     const { alert } = await alertsApi.acknowledge(id)
@@ -40,7 +33,7 @@ export function StaffDashboardPage() {
   return (
     <div className="px-8 py-8">
       <h1 className="text-2xl font-semibold text-neutral-900">Welcome, {user?.name}</h1>
-      <p className="mt-1 text-neutral-500">Here's the current state of the bin network.</p>
+      <p className="mt-1 text-neutral-500">Here's the current state of the bin network, live.</p>
 
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatTile label="Normal bins" value={counts.normal} accentBg="bg-status-normal-bg" accentDot="bg-status-normal" />

@@ -4,6 +4,7 @@ import { sendSuccess } from '../utils/apiResponse.js'
 import { ApiError } from '../utils/ApiError.js'
 import { listAlerts, acknowledgeAlert, resolveAlert } from '../services/alert.service.js'
 import { logActivity } from '../services/audit.service.js'
+import { emitEvent } from '../realtime/eventBus.js'
 
 export const getAlerts = asyncHandler(async (_req: Request, res: Response) => {
   const alerts = await listAlerts()
@@ -14,6 +15,7 @@ export const acknowledge = asyncHandler(async (req: Request, res: Response) => {
   if (!req.auth) throw ApiError.unauthorized()
   const alert = await acknowledgeAlert(req.params.id as string, req.auth.userId)
   await logActivity(req.auth.userId, 'alert.acknowledge', 'Alert', alert.id)
+  emitEvent({ type: 'alert.updated', scope: 'staff', data: { alertId: alert.id, status: alert.status } })
   sendSuccess(res, { alert })
 })
 
@@ -21,5 +23,6 @@ export const resolve = asyncHandler(async (req: Request, res: Response) => {
   if (!req.auth) throw ApiError.unauthorized()
   const alert = await resolveAlert(req.params.id as string)
   await logActivity(req.auth.userId, 'alert.resolve', 'Alert', alert.id)
+  emitEvent({ type: 'alert.updated', scope: 'staff', data: { alertId: alert.id, status: alert.status } })
   sendSuccess(res, { alert })
 })

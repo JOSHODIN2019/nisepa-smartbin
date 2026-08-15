@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { binsApi } from '@/features/bins/api'
+import { useLiveBins } from '@/features/bins/useLiveBins'
 import type { WasteBin } from '@/features/bins/types'
 import { BinMonitoringTable } from '@/components/BinMonitoringTable'
 import { FormField } from '@/components/FormField'
@@ -67,11 +68,7 @@ function CreateBinForm({ onCreated }: { onCreated: (bin: WasteBin) => void }) {
 }
 
 export function AdminBinsPage() {
-  const [bins, setBins] = useState<WasteBin[] | null>(null)
-
-  useEffect(() => {
-    binsApi.list().then(({ bins }) => setBins(bins))
-  }, [])
+  const { bins, setBins } = useLiveBins()
 
   function handleCreated(bin: WasteBin) {
     setBins((prev) => (prev ? [bin, ...prev] : [bin]))

@@ -1575,10 +1575,10 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 
 | Stage | Status | Notes |
 |---|---|---|
-| 22 — Simulated Sensor Service | 🟡 Partial | `POST /api/bins/:id/waste` plays this role directly (no separate module). |
-| 23 — Simulated ESP32 Layer | ⬜ Not started | Bin service plays this role too; no distinct abstraction. |
+| 22 — Simulated Sensor Service | ✅ Done | `server/src/simulations/sensor.simulation.ts` — `readLevelChangePercent(min, max)`, its own module with dedicated unit tests. |
+| 23 — Simulated ESP32 Layer | ✅ Done | `server/src/simulations/esp32.simulation.ts` — `captureSensorReading()` reads Settings then calls the sensor module; `addSimulatedWaste()` calls this instead of computing a reading inline, so the "IoT Data API" boundary (Stage 24) no longer needs to know how a reading was produced. |
 | 24 — IoT Data API | ✅ Done | Same endpoint as above. |
-| 25 — Real-Time Update Layer | ⬜ Not started | Client only sees updates it triggered itself — no push to *other* open tabs/dashboards (would need SSE/WebSocket/polling per Section 27). |
+| 25 — Real-Time Update Layer | ✅ Done | Server-Sent Events (`server/src/realtime/eventBus.ts` + `GET /api/events`) — chosen per Section 27's "simplest reliable solution" guidance over WebSockets/polling. Events are scoped `public` (bin updates — already-public data) or `staff` (alerts/collections — filtered server-side by role, never trust the client). `bin.updated`, `alert.created`, `alert.updated`, `collection.recorded` all wired in. |
 | 26 — Threshold Engine | ✅ Done | `getBinStatus()` / `statusToAlertThreshold()` in `server/src/types/enums.ts` — single source of truth. |
 | 27 — Alert Engine | ✅ Done | `raiseThresholdAlert()` creates an `Alert` doc on every threshold crossing (80/90/100), wired into `bin.controller.ts#addWaste`. `GET/PATCH /api/alerts` (staff/admin only via `requireRole`). |
 | 28 — Notification Engine | 🟡 Partial | Notifies the *acting user* (Stage 20). Does not push to staff/admin — that's what the Alert Engine (above) is for; the two are deliberately separate (personal confirmation vs. staff-facing alert). |
@@ -1591,7 +1591,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 | 30 — Staff Dashboard | ✅ Done | Real stat tiles (bin counts by status) + active-alerts list with Acknowledge/Resolve, at `/staff/dashboard`. |
 | 31 — Bin Monitoring | ✅ Done | `/staff/bins` — dense table (not cards) matching internal-tool density conventions: Bin/Location/Level/Status/Last updated. |
 | 32 — Bin Details | ⬜ Not started | |
-| 33 — Real-Time Monitoring | ⬜ Not started | Depends on Stage 25 (no live push yet — staff must refresh to see other users' changes). |
+| 33 — Real-Time Monitoring | ✅ Done | `useEventStream` hook (`client/src/lib/useEventStream.ts`) + shared `useLiveBins()`/`useLiveAlerts()` hooks power live updates on every staff/admin bin/alert page. **Proven with a real two-browser-context test**, not just claimed: a public visitor's action updated the Staff Bin Monitoring page (69% → 83%) with zero reload/navigation on the staff tab. |
 | 34 — Alert Center | ✅ Done | `/staff/alerts` — full alert list, same `AlertList` component as the dashboard's preview. |
 | 35 — Collection Management | ✅ Done | `/staff/collections` — "Needs collection" list (bins with status != normal) with a "Record collection" action per bin, optional notes field. |
 | 36 — Collection History | ✅ Done | Same page, `CollectionHistoryTable` below the needs-collection list. |

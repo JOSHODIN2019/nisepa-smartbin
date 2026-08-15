@@ -4,6 +4,7 @@ import { StatusBadge } from '@/components/StatusBadge'
 import { binsApi } from '@/features/bins/api'
 import type { WasteBin } from '@/features/bins/types'
 import { ApiClientError } from '@/features/auth/AuthContext'
+import { useEventStream } from '@/lib/useEventStream'
 
 function BinCard({ bin, onAddWaste }: { bin: WasteBin; onAddWaste: (id: string) => Promise<void> }) {
   const [isAdding, setIsAdding] = useState(false)
@@ -66,12 +67,23 @@ export function SmartBinPage() {
     setBins((prev) => (prev ? prev.map((b) => (b.id === id ? bin : b)) : prev))
   }
 
+  // Stage 25/33 — live updates from any visitor's interaction, not just this
+  // browser tab's own actions. Merges since the event payload is sometimes a
+  // full bin DTO (add-waste, create, update) and sometimes partial (a
+  // collection only changes id/currentLevelPercent/status).
+  useEventStream({
+    'bin.updated': (data) => {
+      const patch = data as Partial<WasteBin> & { id: string }
+      setBins((prev) => prev?.map((b) => (b.id === patch.id ? { ...b, ...patch } : b)) ?? prev)
+    },
+  })
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="text-3xl font-semibold text-neutral-900">Smart bin network</h1>
       <p className="mt-3 max-w-2xl text-neutral-600">
         These bins simulate real ultrasonic-sensor readings. Click "Add simulated waste" on any bin to see its
-        level rise — the same update NISEPA staff and administrators see on their dashboards.
+        level rise — the same update NISEPA staff and administrators see on their dashboards, live.
       </p>
 
       {loadError && (
