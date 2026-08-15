@@ -15,6 +15,11 @@ export async function getBin(id: string) {
   return bin
 }
 
+export async function getBinLevelHistory(id: string) {
+  await getBin(id) // 404s if the bin doesn't exist, rather than silently returning []
+  return wasteBinRepository.recentLevels(id)
+}
+
 export async function createBin(input: { code: string; name: string; address: string; capacityLiters: number }) {
   const existing = await wasteBinRepository.findByCode(input.code)
   if (existing) throw ApiError.conflict(`A bin with code "${input.code}" already exists`, 'BIN_CODE_IN_USE')

@@ -2,7 +2,7 @@ import type { Request, Response } from 'express'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { sendSuccess } from '../utils/apiResponse.js'
 import { addWasteSchema, createBinSchema, updateBinSchema } from '../validators/bin.validator.js'
-import { listBins, getBin, addSimulatedWaste, createBin, updateBin } from '../services/wasteBin.service.js'
+import { listBins, getBin, getBinLevelHistory, addSimulatedWaste, createBin, updateBin } from '../services/wasteBin.service.js'
 import { UserRole } from '../types/enums.js'
 import { notifyThresholdCrossed } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
@@ -36,6 +36,13 @@ export const getBins = asyncHandler(async (req: Request, res: Response) => {
 export const getBinById = asyncHandler(async (req: Request, res: Response) => {
   const bin = await getBin(req.params.id as string)
   sendSuccess(res, { bin: toBinDTO(bin) })
+})
+
+export const getBinLevels = asyncHandler(async (req: Request, res: Response) => {
+  const levels = await getBinLevelHistory(req.params.id as string)
+  sendSuccess(res, {
+    levels: levels.map((l) => ({ levelPercent: l.levelPercent, source: l.source, recordedAt: l.recordedAt })),
+  })
 })
 
 export const postBin = asyncHandler(async (req: Request, res: Response) => {

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { StatusBadge } from '@/components/StatusBadge'
 import type { WasteBin } from '@/features/bins/types'
 
@@ -7,9 +8,11 @@ function formatTime(iso: string): string {
 
 export function BinMonitoringTable({
   bins,
+  detailBasePath,
   onToggleActive,
 }: {
   bins: WasteBin[]
+  detailBasePath?: '/staff' | '/admin'
   onToggleActive?: (id: string, isActive: boolean) => void
 }) {
   if (bins.length === 0) {
@@ -33,7 +36,13 @@ export function BinMonitoringTable({
           {bins.map((bin) => (
             <tr key={bin.id} className={bin.isActive ? '' : 'opacity-60'}>
               <td className="px-4 py-3">
-                <p className="font-medium text-neutral-900">{bin.name}</p>
+                {detailBasePath ? (
+                  <Link to={`${detailBasePath}/bins/${bin.id}`} className="font-medium text-brand-700 hover:underline">
+                    {bin.name}
+                  </Link>
+                ) : (
+                  <p className="font-medium text-neutral-900">{bin.name}</p>
+                )}
                 <p className="text-xs text-neutral-500">{bin.code}</p>
               </td>
               <td className="px-4 py-3 text-neutral-600">{bin.location.address}</td>

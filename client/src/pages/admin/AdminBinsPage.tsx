@@ -92,7 +92,7 @@ export function AdminBinsPage() {
         {bins === null ? (
           <p className="text-sm text-neutral-500">Loading bins…</p>
         ) : (
-          <BinMonitoringTable bins={bins} onToggleActive={handleToggleActive} />
+          <BinMonitoringTable bins={bins} detailBasePath="/admin" onToggleActive={handleToggleActive} />
         )}
       </div>
     </div>

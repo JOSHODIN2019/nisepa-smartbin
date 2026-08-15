@@ -1590,7 +1590,7 @@ Updated at the end of every completed stage, per Section 21 (Definition of Done)
 |---|---|---|
 | 30 — Staff Dashboard | ✅ Done | Real stat tiles (bin counts by status) + active-alerts list with Acknowledge/Resolve, at `/staff/dashboard`. |
 | 31 — Bin Monitoring | ✅ Done | `/staff/bins` — dense table (not cards) matching internal-tool density conventions: Bin/Location/Level/Status/Last updated. |
-| 32 — Bin Details | ⬜ Not started | |
+| 32 — Bin Details | ✅ Done | `/staff/bins/:id` and `/admin/bins/:id` (shared `BinDetailPage`, `basePath` prop) — full bin info, level history (new `GET /api/bins/:id/levels`, staff/admin-only), alerts and collection history filtered to that bin. Live via the same SSE hooks. Bin names in `BinMonitoringTable` are now links (`detailBasePath` prop, backward-compatible — omitting it keeps the old plain-text behavior). |
 | 33 — Real-Time Monitoring | ✅ Done | `useEventStream` hook (`client/src/lib/useEventStream.ts`) + shared `useLiveBins()`/`useLiveAlerts()` hooks power live updates on every staff/admin bin/alert page. **Proven with a real two-browser-context test**, not just claimed: a public visitor's action updated the Staff Bin Monitoring page (69% → 83%) with zero reload/navigation on the staff tab. |
 | 34 — Alert Center | ✅ Done | `/staff/alerts` — full alert list, same `AlertList` component as the dashboard's preview. |
 | 35 — Collection Management | ✅ Done | `/staff/collections` — "Needs collection" list (bins with status != normal) with a "Record collection" action per bin, optional notes field. |

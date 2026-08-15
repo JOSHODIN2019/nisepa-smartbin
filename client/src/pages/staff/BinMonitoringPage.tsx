@@ -10,7 +10,11 @@ export function BinMonitoringPage() {
       <p className="mt-1 text-neutral-500">All registered bins and their current levels, live.</p>
 
       <div className="mt-6">
-        {bins === null ? <p className="text-sm text-neutral-500">Loading bins…</p> : <BinMonitoringTable bins={bins} />}
+        {bins === null ? (
+          <p className="text-sm text-neutral-500">Loading bins…</p>
+        ) : (
+          <BinMonitoringTable bins={bins} detailBasePath="/staff" />
+        )}
       </div>
     </div>
   )

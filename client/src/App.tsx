@@ -16,6 +16,7 @@ import { RegisterPage } from '@/pages/auth/RegisterPage'
 import { StaffDashboardPage } from '@/pages/staff/StaffDashboardPage'
 import { BinMonitoringPage } from '@/pages/staff/BinMonitoringPage'
 import { AlertCenterPage } from '@/pages/staff/AlertCenterPage'
+import { BinDetailPage } from '@/pages/staff/BinDetailPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminBinsPage } from '@/pages/admin/AdminBinsPage'
 import { AdminAlertsPage } from '@/pages/admin/AdminAlertsPage'
@@ -60,6 +61,7 @@ function AppRoutes() {
         <Route path="staff" element={<StaffLayout />}>
           <Route path="dashboard" element={<StaffDashboardPage />} />
           <Route path="bins" element={<BinMonitoringPage />} />
+          <Route path="bins/:id" element={<BinDetailPage basePath="/staff" />} />
           <Route path="alerts" element={<AlertCenterPage />} />
           <Route path="collections" element={<StaffCollectionsPage />} />
         </Route>
@@ -69,6 +71,7 @@ function AppRoutes() {
         <Route path="admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="bins" element={<AdminBinsPage />} />
+          <Route path="bins/:id" element={<BinDetailPage basePath="/admin" />} />
           <Route path="users" element={<UserManagementPage />} />
           <Route path="alerts" element={<AdminAlertsPage />} />
           <Route path="collections" element={<AdminCollectionsPage />} />
