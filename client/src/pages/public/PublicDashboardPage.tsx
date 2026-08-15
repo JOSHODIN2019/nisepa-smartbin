@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/features/auth/AuthContext'
 import { NotificationList } from '@/components/NotificationList'
+import { useLiveNotifications } from '@/features/notifications/useLiveNotifications'
 
 const quickActions = [
   {
@@ -39,6 +40,7 @@ const quickActions = [
 export function PublicDashboardPage() {
   const { user } = useAuth()
   const firstName = user?.name.split(' ')[0]
+  const { notifications, markRead } = useLiveNotifications()
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
@@ -63,7 +65,7 @@ export function PublicDashboardPage() {
 
       <div className="mt-10">
         <h2 className="text-sm font-semibold text-neutral-900">Notifications</h2>
-        <NotificationList />
+        <NotificationList notifications={notifications} onMarkRead={markRead} />
       </div>
     </div>
   )

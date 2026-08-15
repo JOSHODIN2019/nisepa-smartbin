@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-import { notificationsApi } from '@/features/notifications/api'
 import type { AppNotification } from '@/features/notifications/types'
 
 function timeAgo(iso: string): string {
@@ -12,25 +10,15 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hours / 24)}d ago`
 }
 
-export function NotificationList() {
-  const [notifications, setNotifications] = useState<AppNotification[] | null>(null)
-
-  useEffect(() => {
-    notificationsApi
-      .list()
-      .then(({ notifications }) => setNotifications(notifications))
-      .catch(() => setNotifications([]))
-  }, [])
-
-  async function handleMarkRead(id: string) {
-    setNotifications((prev) => prev?.map((n) => (n._id === id ? { ...n, read: true } : n)) ?? prev)
-    try {
-      await notificationsApi.markRead(id)
-    } catch {
-      // Non-critical — leave it marked read locally even if the request fails.
-    }
-  }
-
+export function NotificationList({
+  notifications,
+  onMarkRead,
+  emptyMessage = "No notifications yet. You'll see updates here once a bin you interact with crosses a threshold.",
+}: {
+  notifications: AppNotification[] | null
+  onMarkRead: (id: string) => void
+  emptyMessage?: string
+}) {
   if (notifications === null) {
     return <p className="mt-3 text-sm text-neutral-500">Loading notifications…</p>
   }
@@ -38,9 +26,7 @@ export function NotificationList() {
   if (notifications.length === 0) {
     return (
       <div className="mt-3 rounded-lg border border-dashed border-neutral-200 p-8 text-center">
-        <p className="text-sm text-neutral-500">
-          No notifications yet. You'll see updates here once a bin you interact with crosses a threshold.
-        </p>
+        <p className="text-sm text-neutral-500">{emptyMessage}</p>
       </div>
     )
   }
@@ -57,7 +43,7 @@ export function NotificationList() {
           </div>
           {!n.read && (
             <button
-              onClick={() => handleMarkRead(n._id)}
+              onClick={() => onMarkRead(n._id)}
               className="ml-auto shrink-0 text-xs font-medium text-brand-700 hover:underline"
             >
               Mark read

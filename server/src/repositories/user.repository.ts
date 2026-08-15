@@ -14,6 +14,9 @@ export const userRepository = {
   findAll() {
     return User.find().sort({ createdAt: -1 })
   },
+  findActiveByRoles(roles: UserRole[]) {
+    return User.find({ role: { $in: roles }, isActive: true })
+  },
   updateById(id: string, input: { role?: UserRole; isActive?: boolean }) {
     return User.findByIdAndUpdate(id, input, { returnDocument: 'after' })
   },

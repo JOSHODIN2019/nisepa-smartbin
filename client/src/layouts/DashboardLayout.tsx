@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { Logo } from '@/components/Logo'
 import { useAuth } from '@/features/auth/AuthContext'
+import { NotificationBell } from '@/components/NotificationBell'
 
 export interface DashboardNavItem {
   to: string
@@ -52,15 +53,18 @@ export function DashboardLayout({ navItems, roleLabel }: { navItems: DashboardNa
       {/* Mobile top bar */}
       <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-neutral-200 bg-neutral-0 px-4 lg:hidden">
         <Logo />
-        <button
-          onClick={() => setIsNavOpen(true)}
-          aria-label="Open navigation menu"
-          className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100"
-        >
-          <svg viewBox="0 0 24 24" fill="none" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-1">
+          <NotificationBell />
+          <button
+            onClick={() => setIsNavOpen(true)}
+            aria-label="Open navigation menu"
+            className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100"
+          >
+            <svg viewBox="0 0 24 24" fill="none" strokeWidth={2} stroke="currentColor" className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Mobile off-canvas backdrop */}
@@ -81,6 +85,9 @@ export function DashboardLayout({ navItems, roleLabel }: { navItems: DashboardNa
       </aside>
 
       <main className="min-w-0 flex-1 overflow-y-auto pt-14 lg:pt-0">
+        <div className="hidden h-14 items-center justify-end border-b border-neutral-200 bg-neutral-0 px-6 lg:flex">
+          <NotificationBell />
+        </div>
         <Outlet />
       </main>
     </div>

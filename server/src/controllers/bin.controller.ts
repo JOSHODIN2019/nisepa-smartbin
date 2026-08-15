@@ -4,7 +4,7 @@ import { sendSuccess } from '../utils/apiResponse.js'
 import { addWasteSchema, createBinSchema, updateBinSchema } from '../validators/bin.validator.js'
 import { listBins, getBin, getBinLevelHistory, addSimulatedWaste, createBin, updateBin } from '../services/wasteBin.service.js'
 import { UserRole } from '../types/enums.js'
-import { notifyThresholdCrossed } from '../services/notification.service.js'
+import { notifyThresholdCrossed, notifyStaffAndAdminOfAlert } from '../services/notification.service.js'
 import { raiseThresholdAlert } from '../services/alert.service.js'
 import { statusToAlertThreshold } from '../types/enums.js'
 import { logActivity } from '../services/audit.service.js'
@@ -72,6 +72,8 @@ export const addWaste = asyncHandler(async (req: Request, res: Response) => {
     if (threshold) {
       const alert = await raiseThresholdAlert(bin.id, bin.name, threshold, thresholdCrossedInto)
       emitEvent({ type: 'alert.created', scope: 'staff', data: { alertId: alert.id, binId: bin.id, binName: bin.name } })
+      await notifyStaffAndAdminOfAlert(bin.id, bin.name, threshold)
+      emitEvent({ type: 'notification.created', scope: 'staff', data: { binId: bin.id } })
     }
     // The acting user also gets a personal confirmation — separate from the
     // staff/admin-facing Alert created above.
