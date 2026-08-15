@@ -48,10 +48,10 @@ export function AdminActivityPage() {
                 <li key={log._id} className="flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-neutral-800">
                     <span className="font-medium text-neutral-900">{actorName}</span>
-                    {actorRole && <span className="text-xs text-neutral-400"> ({actorRole})</span>}{' '}
+                    {actorRole && <span className="text-xs text-neutral-500"> ({actorRole})</span>}{' '}
                     {ACTION_LABEL[log.action] ?? log.action} <span className="text-neutral-500">{log.targetType}</span>
                   </p>
-                  <p className="text-xs text-neutral-400">{formatTime(log.createdAt)}</p>
+                  <p className="text-xs text-neutral-500">{formatTime(log.createdAt)}</p>
                 </li>
               )
             })}

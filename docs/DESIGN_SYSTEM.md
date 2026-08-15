@@ -9,8 +9,8 @@ Defined in `client/src/index.css` using Tailwind CSS v4's `@theme` directive (CS
 
 ## Color
 
-- **Brand** (`brand-50`…`brand-950`): NISEPA environmental green, used for primary actions, links, active nav state.
-- **Neutral** (`neutral-0`…`neutral-950`): page background, surfaces, borders, body text. Warm-tinted gray (slight green undertone) to stay cohesive with brand green.
+- **Brand** (`brand-50`…`brand-950`): NISEPA environmental green, used for primary actions, links, active nav state. `brand-600` is `#137944` (darkened from the original `#15864c` during the Stage 58 accessibility audit — the original failed WCAG AA 4.5:1 text contrast against the `neutral-50` page background by a narrow margin).
+- **Neutral** (`neutral-0`…`neutral-950`): page background, surfaces, borders, body text. Warm-tinted gray (slight green undertone) to stay cohesive with brand green. `neutral-500` is `#636b64` (darkened from `#737d74`, same Stage 58 fix — it's the token used for secondary/muted *text*, so it has to clear 4.5:1). `neutral-400` (`#9aa39c`) intentionally still does **not** pass text contrast — it's for non-text/decorative use (borders, disabled-state fills, small indicator dots) only. If you reach for `text-neutral-400`, you almost certainly want `text-neutral-500` instead; this was the exact mistake the audit found repeated 8 times across the codebase.
 - **Status** (waste-level semantics, see `PROJECT_MEMORY.md` Section 7):
   | Token | Hex | Range | Meaning |
   |---|---|---|---|

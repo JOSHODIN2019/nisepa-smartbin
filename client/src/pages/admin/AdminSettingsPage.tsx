@@ -95,7 +95,7 @@ export function AdminSettingsPage() {
         </button>
 
         {settings?.updatedAt && (
-          <p className="mt-3 text-xs text-neutral-400">
+          <p className="mt-3 text-xs text-neutral-500">
             Last updated {new Date(settings.updatedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
             {typeof settings.updatedBy === 'object' && settings.updatedBy ? ` by ${settings.updatedBy.name}` : ''}
           </p>

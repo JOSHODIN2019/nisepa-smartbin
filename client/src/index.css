@@ -11,7 +11,7 @@
   --color-brand-300: #78e1a0;
   --color-brand-400: #43c97c;
   --color-brand-500: #22a860;
-  --color-brand-600: #15864c;
+  --color-brand-600: #137944; /* darkened from #15864c — WCAG AA text contrast (Stage 58 audit) */
   --color-brand-700: #136a3f;
   --color-brand-800: #135436;
   --color-brand-900: #11452e;
@@ -24,7 +24,7 @@
   --color-neutral-200: #dde1de;
   --color-neutral-300: #c2c8c3;
   --color-neutral-400: #9aa39c;
-  --color-neutral-500: #737d74;
+  --color-neutral-500: #636b64; /* darkened from #737d74 — WCAG AA text contrast (Stage 58 audit) */
   --color-neutral-600: #565f57;
   --color-neutral-700: #414942;
   --color-neutral-800: #2b302c;

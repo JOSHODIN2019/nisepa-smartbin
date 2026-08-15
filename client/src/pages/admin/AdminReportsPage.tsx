@@ -50,7 +50,7 @@ function ReportDetail({ report }: { report: Report }) {
         </div>
       )}
 
-      <p className="mt-3 text-xs text-neutral-400">
+      <p className="mt-3 text-xs text-neutral-500">
         "Estimated liters" is derived from each bin's fill percentage at collection time × its rated capacity — an estimate, not a real
         weight/volume sensor reading (this is a simulated prototype).
       </p>

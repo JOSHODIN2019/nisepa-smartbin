@@ -39,7 +39,7 @@ export function NotificationList({
           <div className={n.read ? 'pl-5' : ''}>
             <p className="text-sm font-medium text-neutral-900">{n.title}</p>
             <p className="mt-0.5 text-sm text-neutral-600">{n.message}</p>
-            <p className="mt-1 text-xs text-neutral-400">{timeAgo(n.createdAt)}</p>
+            <p className="mt-1 text-xs text-neutral-500">{timeAgo(n.createdAt)}</p>
           </div>
           {!n.read && (
             <button

@@ -57,7 +57,7 @@ export function AlertList({
                 <p className="text-sm font-medium text-neutral-900">{binName}</p>
                 {binLocation && <p className="text-xs text-neutral-500">{binLocation}</p>}
                 <p className="mt-1 text-sm text-neutral-600">{alert.message}</p>
-                <p className="mt-1 text-xs text-neutral-400">{formatTime(alert.createdAt)}</p>
+                <p className="mt-1 text-xs text-neutral-500">{formatTime(alert.createdAt)}</p>
               </div>
             </div>
             <div className="flex shrink-0 gap-2 sm:ml-auto">

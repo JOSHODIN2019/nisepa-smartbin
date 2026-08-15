@@ -153,7 +153,7 @@ export function UserManagementPage() {
                   <tr key={u.id}>
                     <td className="px-4 py-3 font-medium text-neutral-900">
                       {u.name}
-                      {isSelf && <span className="ml-2 text-xs font-normal text-neutral-400">(you)</span>}
+                      {isSelf && <span className="ml-2 text-xs font-normal text-neutral-500">(you)</span>}
                     </td>
                     <td className="px-4 py-3 text-neutral-600">{u.email}</td>
                     <td className="px-4 py-3">
@@ -164,6 +164,7 @@ export function UserManagementPage() {
                           value={u.role}
                           disabled={isSelf || isPending}
                           onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                          aria-label={`Change role for ${u.name}`}
                           className="rounded-md border border-neutral-200 px-2 py-1 text-sm disabled:opacity-50"
                         >
                           <option value="staff">Staff</option>

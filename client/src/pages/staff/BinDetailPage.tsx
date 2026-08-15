@@ -131,7 +131,7 @@ export function BinDetailPage({ basePath }: { basePath: '/staff' | '/admin' }) {
                 {alerts.map((a) => (
                   <li key={a._id} className="px-4 py-2.5 text-sm">
                     <p className="text-neutral-900">{a.message}</p>
-                    <p className="text-xs text-neutral-400">
+                    <p className="text-xs text-neutral-500">
                       {a.status} · {formatTime(a.createdAt)}
                     </p>
                   </li>
