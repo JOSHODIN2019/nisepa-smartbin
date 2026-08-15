@@ -1,4 +1,10 @@
-const API_BASE = '/api'
+// In local dev this stays relative and Vite's proxy (vite.config.ts) forwards
+// it to the local Express server. In production the client (Vercel) and
+// server (Render) are on different domains, so the build needs a full URL —
+// set via VITE_API_BASE_URL at build time on Vercel. Exported so
+// useEventStream can build the same absolute URL for its raw EventSource
+// connection, which doesn't go through this file's fetch wrapper.
+export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
 export class ApiClientError extends Error {
   code: string

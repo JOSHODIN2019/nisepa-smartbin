@@ -10,13 +10,20 @@ import { COOKIE_NAME } from '../middleware/auth.middleware.js'
 
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000 // aligned with default JWT_EXPIRES_IN (7d)
 
+// In production the client (Vercel) and server (Render) are on different
+// domains — a genuinely cross-site fetch from the browser's perspective —
+// so the cookie needs SameSite=None (which itself requires Secure) or the
+// browser simply won't attach it to API requests. Locally both are
+// http://localhost on different ports, which browsers treat as same-site,
+// where SameSite=Lax is both sufficient and doesn't require HTTPS.
+const cookieOptions = {
+  httpOnly: true,
+  secure: env.NODE_ENV === 'production',
+  sameSite: (env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax',
+}
+
 function setAuthCookie(res: Response, token: string) {
-  res.cookie(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: COOKIE_MAX_AGE_MS,
-  })
+  res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: COOKIE_MAX_AGE_MS })
 }
 
 function toPublicUser(user: { id: string; name: string; email: string; role: string; address?: string }) {
@@ -38,7 +45,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 })
 
 export const logout = asyncHandler(async (_req: Request, res: Response) => {
-  res.clearCookie(COOKIE_NAME)
+  // clearCookie must be called with matching attributes (secure/sameSite) —
+  // otherwise some browsers treat it as a different cookie and won't
+  // actually remove the original one.
+  res.clearCookie(COOKIE_NAME, cookieOptions)
   sendSuccess(res, { loggedOut: true })
 })
 

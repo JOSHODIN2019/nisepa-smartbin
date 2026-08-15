@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { API_BASE } from './api'
 
 type EventHandlers = Record<string, (data: unknown) => void>
 
@@ -11,7 +12,11 @@ export function useEventStream(handlers: EventHandlers) {
   handlersRef.current = handlers
 
   useEffect(() => {
-    const source = new EventSource('/api/events')
+    // withCredentials is required once client and server are on different
+    // origins (production) — without it the browser won't attach the auth
+    // cookie, so the server can never tell a staff/admin connection apart
+    // from a public one and staff-scoped events silently stop arriving.
+    const source = new EventSource(`${API_BASE}/events`, { withCredentials: true })
     const types = Object.keys(handlersRef.current)
     const listeners = types.map((type) => {
       const listener = (e: MessageEvent) => handlersRef.current[type]?.(JSON.parse(e.data))
