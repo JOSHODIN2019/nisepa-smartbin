@@ -1,7 +1,21 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, ApiClientError } from '@/features/auth/AuthContext'
+import type { UserRole } from '@/features/auth/types'
 import { FormField } from '@/components/FormField'
+
+// A `from` path can be stale relative to who just logged in — e.g. someone
+// browses to /admin/dashboard while logged out (redirected to /login with
+// that path recorded), then logs in with a public account. Blindly honoring
+// `from` would send them to a route RequireAuth immediately bounces them out
+// of (landing on "/", not their own dashboard). Only trust `from` when the
+// authenticated user's role could actually land there.
+function isPathAllowedForRole(path: string, role: UserRole): boolean {
+  if (path === '/dashboard') return true // shared public dashboard route, open to every role
+  if (role === 'admin') return path.startsWith('/admin')
+  if (role === 'staff') return path.startsWith('/staff')
+  return !path.startsWith('/admin') && !path.startsWith('/staff')
+}
 
 export function LoginPage() {
   const { login } = useAuth()
@@ -20,7 +34,8 @@ export function LoginPage() {
       const user = await login(email, password)
       const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname
       const fallback = user.role === 'admin' ? '/admin/dashboard' : user.role === 'staff' ? '/staff/dashboard' : '/dashboard'
-      navigate(from ?? fallback, { replace: true })
+      const destination = from && isPathAllowedForRole(from, user.role) ? from : fallback
+      navigate(destination, { replace: true })
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Something went wrong. Please try again.')
     } finally {
